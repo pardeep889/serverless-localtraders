@@ -1,0 +1,31 @@
+{
+  "name": "user-service",
+  "version": "1.0.0",
+  "description": "all user endpoints",
+  "main": "authenticate.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nearcomponents/gateway-mock-apis.git"
+  },
+  "keywords": [
+    "gateway",
+    "mock-up",
+    "apis"
+  ],
+  "author": "titus@primelab.io",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nearcomponents/gateway-mock-apis/issues"
+  },
+  "homepage": "https://github.com/nearcomponents/gateway-mock-apis#README",
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1",
+    "unirest": "^0.6.0"
+  },
+  "devDependencies": {
+    "serverless-offline": "^8.8.1"
+  }
+}

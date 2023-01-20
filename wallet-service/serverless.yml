@@ -1,0 +1,39 @@
+service: wallet-service
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  httpApi:
+    id: !ImportValue MockNearAppsHttpApiId
+  stage: dev
+  region: ${file(../serverless-config.json):region}
+
+functions:
+  create-wallet:
+    handler: create.handler
+    events:
+      - httpApi:
+          path: /wallets
+          method: post
+  list-wallet:
+    handler: list.handler
+    events:
+      - httpApi:
+          path: /wallets/list/{userId}
+          method: get
+  delete-wallet:
+    handler: delete.handler
+    events:
+      - httpApi:
+          path: /wallets/{walletId}
+          method: delete
+  get-wallet:
+    handler: get.handler
+    events:
+      - httpApi:
+          path: /wallets/{walletId}
+          method: get
+
+# plugins:
+#   - serverless-offline

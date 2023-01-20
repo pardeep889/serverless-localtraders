@@ -1,0 +1,30 @@
+#####################################################
+###
+### AWS CI/CD CodeBuild Configuration
+###
+### NOTE: Please do NOT remove
+#####################################################
+version: 0.2
+
+env:
+  shell: bash
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+    commands:
+      - echo "========================> Installing Serverless Framework ..."
+      - npm install -g serverless@latest
+      - echo "========================> Installing Root npm Packages ..."
+      - npm install
+
+  build:
+    commands:
+      - echo "========================> Deploying Services ..."
+      - /bin/bash deploy-services.sh
+
+cache:
+  paths:
+    - node_modules
+    - '*/node_modules'

@@ -1,0 +1,112 @@
+org: rajatdua
+app: aws-node-http-api-project
+service: user-service
+frameworkVersion: "3"
+
+custom:
+  tableName: "UserTable"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [UsersTable, Arn]
+  environment:
+    USERS_TABLE: UserTable
+Type: AWS::Logs::LogGroup
+Properties:
+  DataProtectionPolicy: Json
+  KmsKeyId: String
+  LogGroupName: String
+  RetentionInDays: Integer
+  Tags:
+    - Tag
+
+functions:
+  create-user:
+    handler: create.handler
+    events:
+      - httpApi:
+          path: /users
+          method: post
+  update-user:
+    handler: update.handler
+    events:
+      - httpApi:
+          path: /users/{userId}
+          method: put
+  delete-user:
+    handler: delete.handler
+    events:
+      - httpApi:
+          path: /users/{userId}
+          method: delete
+  get-user:
+    handler: get.handler
+    events:
+      - httpApi:
+          path: /users/{userId}
+          method: get
+  list-users:
+    handler: list.handler
+    events:
+      - httpApi:
+          path: /users
+          method: get
+  login:
+    handler: authenticate.handler
+    events:
+      - httpApi:
+          path: /users/login
+          method: post
+
+  login-confirm:
+    handler: authenticate-confirm.handler
+    events:
+      - httpApi:
+          path: /users/login/verify
+          method: post
+
+  refresh-token:
+    handler: refresh-token.handler
+    events:
+      - httpApi:
+          path: /users/refresh
+          method: post
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: UserTable
+        AttributeDefinitions:
+          - AttributeName: UserId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: UserId
+            KeyType: HASH
+        #  AttributeDefinitions:
+        #   - AttributeName: FirstName
+        #     AttributeType: S
+        #  AttributeDefinitions:
+        #   - AttributeName: LastName
+        #     AttributeType: S
+        # BillingMode:
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
+
+plugins:
+  - serverless-offline
