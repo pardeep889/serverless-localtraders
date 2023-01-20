@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/nearcomponents/gateway-mock-apis#README",
   "dependencies": {
+    "aws-sdk": "^2.1298.0",
     "jsonwebtoken": "^8.5.1",
     "unirest": "^0.6.0"
   },

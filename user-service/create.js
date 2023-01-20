@@ -3,11 +3,11 @@ const utils = require("./utils");
 
 const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 
-module.exports.handler = async (ctx, event) => {
-  const { userId } = JSON.parse(event.body);
+module.exports.handler = async (event) => {
+  const userId = event.body;
   if (!userId) {
     return utils.send(400, {
-      message: "Missing userId path param",
+      message: event.body,
       data: {},
     });
   }
