@@ -3,7 +3,7 @@
     "eslint": "^8.9.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
-    "serverless-offline": "^8.4.0"
+    "serverless-offline": "^8.8.1"
   },
   "dependencies": {
     "@serverless/aws-sdk": "^6.1.2",

@@ -1,6 +1,9 @@
 const utils = require("./utils");
+const AWS = require("aws-sdk");
 
-module.exports.handler = async (ctx, request) => {
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
+
+module.exports.handler = async (request) => {
   const { userId } = request.pathParameters;
   if (!userId) {
     return utils.send(400, {
@@ -8,17 +11,18 @@ module.exports.handler = async (ctx, request) => {
       data: {},
     });
   }
-  const USER = {
-    firstName: "test",
-    lastName: "user",
-    walletId: "testuser.near",
-    email: "mock-test@primelab.io",
-    phone: "+2551817181",
-    dob: "2000-10-10",
+  console.log("###",userId)
+  const params = {
+    TableName: "UserTable",
+    Key: {
+      UserId: userId,
+    },
   };
-  const response = {
-    message: "User retrieved successfully.",
-    data: USER,
-  };
-  return utils.send(200, response);
+
+  try {
+    const data = await dynamoDb.get(params).promise();
+    return utils.send(200, { message: "User retrieved successfully", data });
+  } catch (error) {
+    return utils.send(400, { message: "Unable to retrieve user", error });
+  }
 };

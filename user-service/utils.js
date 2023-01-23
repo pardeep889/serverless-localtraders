@@ -29,6 +29,9 @@ const send = (statusCode, data) => {
     "Access-Control-Allow-Credentials": true,
   };
 
+  console.log("#### status code ####",statusCode)
+  console.log("#### data  ####",data)
+
   return {
     statusCode,
     headers: responseHeaders,

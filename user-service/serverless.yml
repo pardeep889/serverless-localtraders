@@ -1,10 +1,10 @@
-org: rajatdua
-app: aws-node-http-api-project
+org: preetgur
+app: aws-node-express-dynamodb-api
 service: user-service
 frameworkVersion: "3"
 
 custom:
-  tableName: "UserTable"
+  tableName: "Users"
 
 provider:
   name: aws
@@ -21,9 +21,9 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource:
-            - Fn::GetAtt: [UsersTable, Arn]
+            - Fn::GetAtt: [Users, Arn]
   environment:
-    USERS_TABLE: UserTable
+    USERS_TABLE: Users
 Type: AWS::Logs::LogGroup
 Properties:
   DataProtectionPolicy: Json
@@ -38,7 +38,7 @@ functions:
     handler: create.handler
     events:
       - httpApi:
-          path: /users
+          path: /user
           method: post
   update-user:
     handler: update.handler
@@ -85,28 +85,52 @@ functions:
           path: /users/refresh
           method: post
 
+
+
 resources:
   Resources:
-    UsersTable:
+    Users:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: UserTable
+        TableName: Users
         AttributeDefinitions:
-          - AttributeName: UserId
+          - AttributeName: username
+            AttributeType: S
+          - AttributeName: email
+            AttributeType: S
+          - AttributeName: walletaddress
+            AttributeType: S
+          - AttributeName: firstname
             AttributeType: S
         KeySchema:
-          - AttributeName: UserId
+          - AttributeName: username
             KeyType: HASH
-        #  AttributeDefinitions:
-        #   - AttributeName: FirstName
-        #     AttributeType: S
-        #  AttributeDefinitions:
-        #   - AttributeName: LastName
-        #     AttributeType: S
-        # BillingMode:
         ProvisionedThroughput:
-          ReadCapacityUnits: 3
-          WriteCapacityUnits: 3
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+  # Resources:
+  #   UsersTable:
+  #     Type: AWS::DynamoDB::Table
+  #     Properties:
+  #       TableName: UserTable
+  #       AttributeDefinitions:
+  #         - AttributeName: UserId
+  #           AttributeType: S
+  #       KeySchema:
+  #         - AttributeName: UserId
+  #           KeyType: HASH
+  #       #  AttributeDefinitions:
+  #       #   - AttributeName: FirstName
+  #       #     AttributeType: S
+  #       #  AttributeDefinitions:
+  #       #   - AttributeName: LastName
+  #       #     AttributeType: S
+  #       # BillingMode:
+  #       ProvisionedThroughput:
+  #         ReadCapacityUnits: 3
+  #         WriteCapacityUnits: 3
+
 
 plugins:
   - serverless-offline

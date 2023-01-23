@@ -24,6 +24,8 @@
   "dependencies": {
     "aws-sdk": "^2.1298.0",
     "jsonwebtoken": "^8.5.1",
+    "offline": "^0.0.1",
+    "serverless": "^3.26.0",
     "unirest": "^0.6.0"
   },
   "devDependencies": {
