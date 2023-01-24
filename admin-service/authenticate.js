@@ -8,7 +8,7 @@ module.exports.handler = async (req) => {
   try {
     let { email, password } = JSON.parse(req.body);
     const params = {
-      TableName: "User",
+      TableName: "AdminUser",
       FilterExpression: "email = :email",
       ExpressionAttributeValues: {
         ":email": email,

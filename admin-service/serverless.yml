@@ -4,7 +4,7 @@ service: admin-service
 frameworkVersion: "3"
 
 custom:
-  tableName: "User"
+  tableName: "AdminUser"
 
 provider:
   name: aws
@@ -21,9 +21,9 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource:
-            - Fn::GetAtt: [UsersTable, Arn]
+            - Fn::GetAtt: [AdminTable, Arn]
   environment:
-    USERS_TABLE: User
+    USERS_TABLE: AdminUser
 Type: AWS::Logs::LogGroup
 Properties:
   DataProtectionPolicy: Json
@@ -87,10 +87,10 @@ functions:
 
 resources:
   Resources:
-    UsersTable:
+    AdminTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: User
+        TableName: AdminUser
         AttributeDefinitions:
           - AttributeName: uid
             AttributeType: S

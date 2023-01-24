@@ -29,7 +29,7 @@ module.exports.handler = async (event) => {
 
     // first check if email already exits
     const paramsScan = {
-      TableName: "User",
+      TableName: "AdminUser",
       FilterExpression: "email = :email",
       ExpressionAttributeValues: {
         ":email": email,
@@ -47,7 +47,7 @@ module.exports.handler = async (event) => {
 
     // add user to db
     const params = {
-      TableName: "User",
+      TableName: "AdminUser",
       Item: USER,
     };
 
