@@ -1,10 +1,10 @@
 # org: rajatdua
 # app: aws-node-http-api-project
-service: user-service
+service: admin-service
 frameworkVersion: "3"
 
 custom:
-  tableName: "UserTable"
+  tableName: "User"
 
 provider:
   name: aws
@@ -23,7 +23,7 @@ provider:
           Resource:
             - Fn::GetAtt: [UsersTable, Arn]
   environment:
-    USERS_TABLE: UserTable
+    USERS_TABLE: User
 Type: AWS::Logs::LogGroup
 Properties:
   DataProtectionPolicy: Json
@@ -90,12 +90,12 @@ resources:
     UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: UserTable
+        TableName: User
         AttributeDefinitions:
-          - AttributeName: UserId
+          - AttributeName: uid
             AttributeType: S
         KeySchema:
-          - AttributeName: UserId
+          - AttributeName: uid
             KeyType: HASH
         #  AttributeDefinitions:
         #   - AttributeName: FirstName
