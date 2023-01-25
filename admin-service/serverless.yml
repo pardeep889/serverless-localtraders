@@ -38,52 +38,40 @@ functions:
     handler: create.handler
     events:
       - httpApi:
-          path: /user
+          path: /admin
           method: post
   update-user:
     handler: update.handler
     events:
       - httpApi:
-          path: /users/{userId}
+          path: /admin/{userId}
           method: put
   delete-user:
     handler: delete.handler
     events:
       - httpApi:
-          path: /users/{userId}
+          path: /admin/{userId}
           method: delete
   get-user:
     handler: get.handler
     events:
       - httpApi:
-          path: /users/{userId}
+          path: /admin/{userId}
           method: get
   list-users:
     handler: list.handler
     events:
       - httpApi:
-          path: /users
+          path: /admin
           method: get
   login:
     handler: authenticate.handler
     events:
       - httpApi:
-          path: /users/login
+          path: /admin/login
           method: post
 
-  login-confirm:
-    handler: authenticate-confirm.handler
-    events:
-      - httpApi:
-          path: /users/login/verify
-          method: post
 
-  refresh-token:
-    handler: refresh-token.handler
-    events:
-      - httpApi:
-          path: /users/refresh
-          method: post
 
 resources:
   Resources:
