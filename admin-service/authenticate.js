@@ -43,12 +43,19 @@ module.exports.handler = async (req) => {
           user : resp
         },
       });
+    }else{ 
+      return utils.send(400, {
+        data: {
+          isAuth: false,
+          user : 'Username or password is wrong'
+        },
+      });
     }
   } catch (error) {
-    console.log(error);
     return utils.send(400, {
+      isAuth: false,
       message: "something went wrong.",
-      data: {},
+      error: "For development check cloudwatch logs"
     });
   }
 };
