@@ -1,26 +1,53 @@
 const AWS = require("aws-sdk");
 const utils = require("./utils");
+const CryptoJS = require("crypto-js");
 
 const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = async (event) => {
-  const user = JSON.parse(event.body);
+  
   console.log("##### body ###", event.body);
+  const user = JSON.parse(event.body);
+  let { firstName, lastName, email, password} = user;
+
   if (!user) {
     return utils.send(400, {
       message: event.body,
       data: {},
     });
   }
-  console.log("#######",user.firstName,user.id)
+  const hashedPassword = CryptoJS.SHA256(password).toString();
+  const id = Date.now() + Math.random().toString(36).substring(2, 15);
+  
+  console.log("#######",user.firstName,id)
   const USER = {
-    UserId: user.id,
-    firstname: user.firstName,
-    lastname: user.lastName,
-    walletId: user.walletId,
-    email: user.email,
-    phone : user.phone
+    UserId: id,
+    firstName,
+    lastName,
+    email,
+    password:hashedPassword
   };
+
+
+   // first check if email already exits
+   const paramsScan = {
+    TableName: "UserTable",
+    FilterExpression: "email = :email",
+    ExpressionAttributeValues: {
+      ":email": email,
+    },
+  };
+
+  const data = await dynamoDbClient.scan(paramsScan).promise();
+  if (data.Items.length > 0) {
+    return utils.send(400, {
+      data: {
+        message: "User with this email already exists",
+      },
+    });
+  }
+
+
   const params = {
     TableName: "UserTable",
     Item: USER,

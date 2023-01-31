@@ -7,8 +7,11 @@ module.exports.handler = async (request) => {
   try {
     const params = {
       TableName: "UserTable",
+      // FilterExpression: 'attribute_not_exists(password)'
+      ProjectionExpression: 'UserId,firstName,lastName, email'
     };
     const data = await dynamoDb.scan(params).promise();
+    console.log("###dataa ####",data)
     const response = {
       message: "Request successful",
       data: data.Items,
