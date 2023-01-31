@@ -13,7 +13,6 @@ const getToken = async (user, expiry) =>  jwt.sign(
 const verifyUser = async (req) => {
   try {
     const token = req.headers?.authorization?.split(" ")[1];
-    console.log("#### auth ####", token);
     if (token && token != undefined) {
       const resp = await jwt.verify(token, SECRET_KEY);
       console.log("#### resp #####", resp);

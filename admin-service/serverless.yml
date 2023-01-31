@@ -22,6 +22,10 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - Fn::GetAtt: [AdminTable, Arn]
+            - arn:aws:dynamodb:us-east-1:945677977841:table/UserTable
+
+              
+            
   environment:
     USERS_TABLE: AdminUser
 Type: AWS::Logs::LogGroup
@@ -59,10 +63,10 @@ functions:
           path: /admin/{userId}
           method: get
   list-users:
-    handler: list.handler
+    handler: list-users.handler
     events:
       - httpApi:
-          path: /admin
+          path: /admin/list-users
           method: get
   login:
     handler: authenticate.handler
@@ -95,6 +99,7 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 3
           WriteCapacityUnits: 3
+          
 
 plugins:
   - serverless-offline
