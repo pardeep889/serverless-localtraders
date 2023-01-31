@@ -1,6 +1,7 @@
 const AWS = require("aws-sdk");
 const utils = require("./utils");
 const CryptoJS = require("crypto-js");
+const { getToken } = require("./token");
 
 const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 
@@ -13,8 +14,8 @@ module.exports.handler = async (req) => {
       ExpressionAttributeValues: {
         ":email": email,
       },
-    //   Limit: 1,
     };
+   
     const data = await dynamoDbClient.scan(params).promise();
     if (data.Items.length != 1) {
       return utils.send(400, {
@@ -35,12 +36,13 @@ module.exports.handler = async (req) => {
           },
         });
       }
-      
+      const token = await getToken(email,300)
       const {password:pwd, ...resp } = data.Items[0];
+   
       return utils.send(200, {
         data: {
           isAuth: true,
-          user : resp
+          user : {...resp,token}
         },
       });
     }else{ 
