@@ -12,9 +12,23 @@ module.exports.handler = async (request) => {
 
   try {
     const data = await dynamoDb.scan(params).promise();
+
+    const methods = data.Items.reduce((acc, item) => {
+        if (!acc[item.category]) {
+          acc[item.category] = [];
+        }
+        acc[item.category].push({
+          provider: item.provider,
+          id: item.id,
+          icon: item.icon,
+          symbol: item.symbol
+        });
+        return acc;
+      }, {});
+
     const response = {
       message: "Request successful",
-      data: data.Items,
+      data: methods
     };
     return utils.send(200, response);
    } catch (error) {
