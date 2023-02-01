@@ -23,6 +23,7 @@ provider:
           Resource:
             - Fn::GetAtt: [AdminTable, Arn]
             - Fn::GetAtt: [PaymentMethod, Arn]
+            - Fn::GetAtt: [PaymentCategory, Arn]
             - arn:aws:dynamodb:us-east-1:945677977841:table/UserTable
 
               
@@ -90,6 +91,19 @@ functions:
           path: /admin/payment-method
           method: get        
 
+  create-payment-category :
+    handler: create-payment-category.handler
+    events:
+      - httpApi:
+          path: /admin/payment-category
+          method: post
+
+  list-payment-category :
+    handler: list-payment-category.handler
+    events:
+      - httpApi:
+          path: /admin/payment-category
+          method: get
 
 
 resources:
@@ -111,6 +125,7 @@ resources:
     PaymentMethod:
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        TableName: 'PaymentMethod'
         AttributeDefinitions:
           - AttributeName: 'category'
             AttributeType: 'S'
@@ -124,7 +139,20 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
-        TableName: 'PaymentMethod'
+
+    PaymentCategory:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        TableName: 'PaymentCategory'
+        AttributeDefinitions:
+          - AttributeName: 'category'
+            AttributeType: 'S'
+        KeySchema:
+          - AttributeName: 'category'
+            KeyType: 'HASH'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
           
 
 plugins:
