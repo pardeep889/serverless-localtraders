@@ -22,6 +22,7 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - Fn::GetAtt: [AdminTable, Arn]
+            - Fn::GetAtt: [PaymentMethod, Arn]
             - arn:aws:dynamodb:us-east-1:945677977841:table/UserTable
 
               
@@ -75,6 +76,20 @@ functions:
           path: /admin/login
           method: post
 
+  create-paymentMethod :
+    handler: create-paymentMethod.handler
+    events:
+      - httpApi:
+          path: /admin/payment-method/create
+          method: post
+
+  get-paymentMethod:
+    handler: get-payment-methods.handler
+    events:
+      - httpApi:
+          path: /admin/payment-method
+          method: get        
+
 
 
 resources:
@@ -89,16 +104,27 @@ resources:
         KeySchema:
           - AttributeName: uid
             KeyType: HASH
-        #  AttributeDefinitions:
-        #   - AttributeName: FirstName
-        #     AttributeType: S
-        #  AttributeDefinitions:
-        #   - AttributeName: LastName
-        #     AttributeType: S
-        # BillingMode:
         ProvisionedThroughput:
           ReadCapacityUnits: 3
           WriteCapacityUnits: 3
+
+    PaymentMethod:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: 'category'
+            AttributeType: 'S'
+          - AttributeName: 'provider'
+            AttributeType: 'S'
+        KeySchema:
+          - AttributeName: 'category'
+            KeyType: 'HASH'
+          - AttributeName: 'provider'
+            KeyType: 'RANGE'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TableName: 'PaymentMethod'
           
 
 plugins:
