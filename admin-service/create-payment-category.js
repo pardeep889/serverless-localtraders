@@ -1,5 +1,6 @@
 const AWS = require("aws-sdk");
 const utils = require("./utils");
+const { verifyUser } = require("./token");
 
 
 const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
@@ -18,6 +19,16 @@ module.exports.handler = async (event) => {
       });
     }
 
+    const isVerified = await verifyUser(event);
+    if (isVerified.statusCode === 401) {
+      return {
+        statusCode: 401,
+        body: JSON.stringify({
+          isVerified: false,
+          error: "Access Forbidden",
+        }),
+      };
+    }
 
     // first check if category already exits
     const paramsScan = {
