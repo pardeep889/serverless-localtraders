@@ -60,7 +60,7 @@ module.exports.handler = async (event) => {
       },
     });
   } catch (error) {
-    console.log("#### errorr ####", error);
+ 
     return utils.send(400, {
       message: "something went wrong",
       data: {},

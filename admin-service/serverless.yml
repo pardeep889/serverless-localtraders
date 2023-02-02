@@ -24,6 +24,8 @@ provider:
             - Fn::GetAtt: [AdminTable, Arn]
             - Fn::GetAtt: [PaymentMethod, Arn]
             - Fn::GetAtt: [PaymentCategory, Arn]
+            - Fn::GetAtt: [ServiceProviderTable, Arn]
+
             - arn:aws:dynamodb:us-east-1:945677977841:table/UserTable
 
               
@@ -105,6 +107,20 @@ functions:
           path: /admin/payment-category
           method: get
 
+  create-payment-service-provider:
+    handler: create-service-provider.handler
+    events:
+      - httpApi:
+          path: /admin/service-provider
+          method: post 
+
+  list-payment-service-provider:
+    handler: list-service-provider.handler
+    events:
+      - httpApi:
+          path: /admin/service-provider/{category}
+          method: get 
+          
 
 resources:
   Resources:
@@ -153,7 +169,32 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
-          
+
+    ServiceProviderTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: PaymentServiceProvider
+        AttributeDefinitions:
+          - AttributeName: providerId
+            AttributeType: S
+          - AttributeName: category
+            AttributeType: S
+        KeySchema:
+          - AttributeName: providerId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: PaymentCategoryIndex
+            KeySchema:
+              - AttributeName: category
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 
 plugins:
   - serverless-offline
