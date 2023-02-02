@@ -1,0 +1,71 @@
+
+service: trading-service
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [TradingTable, Arn]
+          
+Type: AWS::Logs::LogGroup
+Properties:
+  DataProtectionPolicy: Json
+  KmsKeyId: String
+  LogGroupName: String
+  RetentionInDays: Integer
+  Tags:
+    - Tag
+
+functions:
+  create-sell:
+    handler: create.handler
+    events:
+      - httpApi:
+          path: /trade
+          method: post
+  update-trade:
+    handler: update.handler
+    events:
+      - httpApi:
+          path: /trade/{id}
+          method: put
+
+  list-trade:
+    handler: list.handler
+    events:
+      - httpApi:
+          path: /trade
+          method: get
+
+
+resources:
+  Resources:
+    TradingTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: 'id'
+            AttributeType: 'S'
+        KeySchema:
+          - AttributeName: 'id'
+            KeyType: 'HASH'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TableName: 'trading-offer'
+          
+
+plugins:
+  - serverless-offline
