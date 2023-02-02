@@ -5,12 +5,10 @@ const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = async (event) => {
   try {
-    console.log("## quwery ####",event.queryStringParameters)
     let typeFilter = event.queryStringParameters?.type;
-    let payWithFilter = event.queryStringParameters?.payWith;
+    let payWithFilter = event.queryStringParameters?.paymentMethodCategory;
     let locationFilter = event.queryStringParameters?.location;
     let priceRangeFilter = event.queryStringParameters?.priceRange;
-    console.log("## quwery w####",event.queryStringParameters)
 
     if (!typeFilter && !payWithFilter && !locationFilter && !priceRangeFilter) {
         const param1 = {
@@ -38,9 +36,9 @@ module.exports.handler = async (event) => {
       if (filterExpression.length > 0) {
         filterExpression += " and ";
       }
-      filterExpression += `#payWith = :payWith${i}`;
-      expressionAttributeValues[`:payWith${i}`] = payWithFilter;
-      expressionAttributeNames[`#payWith`] = "payWith";
+      filterExpression += `#paymentMethodCategory = :paymentMethodCategory${i}`;
+      expressionAttributeValues[`:paymentMethodCategory${i}`] = payWithFilter;
+      expressionAttributeNames[`#paymentMethodCategory`] = "paymentMethodCategory";
       i++;
     }
 
