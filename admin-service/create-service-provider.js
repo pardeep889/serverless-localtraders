@@ -1,0 +1,57 @@
+const AWS = require("aws-sdk");
+const utils = require("./utils");
+const { verifyUser } = require("./token");
+
+
+const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
+
+module.exports.handler = async (event) => {
+  try {
+    const bodyRequest = JSON.parse(event.body);
+    let { category,providerName,symbol,icon } = bodyRequest;
+
+    const id = Date.now() + Math.random().toString(36).substring(2, 15);
+
+    if (!bodyRequest) {
+      return utils.send(400, {
+        message: event.body,
+        data: {},
+      });
+    }
+
+    const isVerified = await verifyUser(event);
+    if (isVerified.statusCode === 401) {
+      return {
+        statusCode: 401,
+        body: JSON.stringify({
+          isVerified: false,
+          error: "Access Forbidden",
+        }),
+      };
+    }
+    const data = {
+        providerId: id,
+        category,
+        providerName,
+        symbol,
+        icon
+    };
+
+    // add user to db
+    const params = {
+      TableName: "PaymentServiceProvider",
+      Item: data,
+    };
+
+    await dynamoDbClient.put(params).promise();
+    return utils.send(200, {
+      message:"PaymentService Provider method added successfully",
+      data :{}
+    });
+  } catch (error) {
+    return utils.send(400, {
+      message: "something went wrong",
+      data: error,
+    });
+  }
+};
