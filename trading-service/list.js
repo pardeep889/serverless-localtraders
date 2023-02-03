@@ -9,8 +9,11 @@ module.exports.handler = async (event) => {
     let payWithFilter = event.queryStringParameters?.paymentMethodCategory;
     let locationFilter = event.queryStringParameters?.location;
     let priceRangeFilter = event.queryStringParameters?.priceRange;
+    let limit = event.queryStringParameters?.limit;
+    let offset = event.queryStringParameters?.offset;
 
-    if (!typeFilter && !payWithFilter && !locationFilter && !priceRangeFilter) {
+
+    if (!typeFilter && !payWithFilter && !locationFilter && !priceRangeFilter && !limit && !offset) {
         const param1 = {
             TableName: "trading-offer",
             };
@@ -58,22 +61,25 @@ module.exports.handler = async (event) => {
         filterExpression += `#price < :price${i}`;
         expressionAttributeValues[`:price${i}`] = parseInt(priceRangeFilter);
         expressionAttributeNames[`#price`] = "price";
-        // filterExpression += `#price BETWEEN :priceMin${i} AND :priceMax${i}`;
-        // expressionAttributeValues[`:priceMin${i}`] = 0;
-        // expressionAttributeValues[`:priceMax${i}`] = parseInt(priceRangeFilter);
-        // expressionAttributeNames[`#price`] = "price";
       }
+
+
     // retrieve filtered data from db
     const params = {
       TableName: "trading-offer",
       FilterExpression: filterExpression,
       ExpressionAttributeValues: expressionAttributeValues,
       ExpressionAttributeNames: expressionAttributeNames,
+      Limit: parseInt(limit),
+      ExclusiveStartKey: offset ? JSON.parse(offset): undefined,
     };
 
+
     const resp = await dynamoDbClient.scan(params).promise();
+    
     return utils.send(200, {
         data: resp.Items,
+        offset: resp.LastEvaluatedKey
     });
   } catch (error) {
     console.log("#### error ###",error)

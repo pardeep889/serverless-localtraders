@@ -49,6 +49,12 @@ functions:
           path: /trade
           method: get
 
+  list-all-trade:
+    handler: list-all.handler
+    events:
+      - httpApi:
+          path: /alltrade
+          method: get
 
 resources:
   Resources:
