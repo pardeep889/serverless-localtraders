@@ -28,18 +28,10 @@ provider:
 
             - arn:aws:dynamodb:us-east-1:945677977841:table/UserTable
 
-              
-            
   environment:
     USERS_TABLE: AdminUser
-Type: AWS::Logs::LogGroup
-Properties:
-  DataProtectionPolicy: Json
-  KmsKeyId: String
-  LogGroupName: String
-  RetentionInDays: Integer
-  Tags:
-    - Tag
+  httpApi:
+    cors: true
 
 functions:
   create-user:
@@ -79,7 +71,7 @@ functions:
           path: /admin/login
           method: post
 
-  create-paymentMethod :
+  create-paymentMethod:
     handler: create-paymentMethod.handler
     events:
       - httpApi:
@@ -91,16 +83,16 @@ functions:
     events:
       - httpApi:
           path: /admin/payment-method
-          method: get        
+          method: get
 
-  create-payment-category :
+  create-payment-category:
     handler: create-payment-category.handler
     events:
       - httpApi:
           path: /admin/payment-category
           method: post
 
-  list-payment-category :
+  list-payment-category:
     handler: list-payment-category.handler
     events:
       - httpApi:
@@ -112,15 +104,14 @@ functions:
     events:
       - httpApi:
           path: /admin/service-provider
-          method: post 
+          method: post
 
   list-payment-service-provider:
     handler: list-service-provider.handler
     events:
       - httpApi:
           path: /admin/service-provider/{category}
-          method: get 
-          
+          method: get
 
 resources:
   Resources:
@@ -139,33 +130,33 @@ resources:
           WriteCapacityUnits: 3
 
     PaymentMethod:
-      Type: 'AWS::DynamoDB::Table'
+      Type: "AWS::DynamoDB::Table"
       Properties:
-        TableName: 'PaymentMethod'
+        TableName: "PaymentMethod"
         AttributeDefinitions:
-          - AttributeName: 'category'
-            AttributeType: 'S'
-          - AttributeName: 'provider'
-            AttributeType: 'S'
+          - AttributeName: "category"
+            AttributeType: "S"
+          - AttributeName: "provider"
+            AttributeType: "S"
         KeySchema:
-          - AttributeName: 'category'
-            KeyType: 'HASH'
-          - AttributeName: 'provider'
-            KeyType: 'RANGE'
+          - AttributeName: "category"
+            KeyType: "HASH"
+          - AttributeName: "provider"
+            KeyType: "RANGE"
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
 
     PaymentCategory:
-      Type: 'AWS::DynamoDB::Table'
+      Type: "AWS::DynamoDB::Table"
       Properties:
-        TableName: 'PaymentCategory'
+        TableName: "PaymentCategory"
         AttributeDefinitions:
-          - AttributeName: 'category'
-            AttributeType: 'S'
+          - AttributeName: "category"
+            AttributeType: "S"
         KeySchema:
-          - AttributeName: 'category'
-            KeyType: 'HASH'
+          - AttributeName: "category"
+            KeyType: "HASH"
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
