@@ -113,6 +113,13 @@ functions:
           path: /admin/service-provider/{category}
           method: get
 
+  list-all-payment-service-provider:
+    handler: list-all-service-provider.handler
+    events:
+      - httpApi:
+          path: /admin/service-provider
+          method: get
+
 resources:
   Resources:
     AdminTable:
