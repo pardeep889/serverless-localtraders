@@ -56,6 +56,13 @@ functions:
           path: /alltrade
           method: get
 
+  trade:
+    handler: get.handler
+    events:
+      - httpApi:
+          path: /trade/{id}
+          method: get
+
 resources:
   Resources:
     TradingTable:
