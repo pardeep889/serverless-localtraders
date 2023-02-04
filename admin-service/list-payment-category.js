@@ -10,16 +10,16 @@ module.exports.handler = async (request) => {
       TableName: "PaymentCategory",
     };
 
-    const isVerified = await verifyUser(request);
-    if (isVerified.statusCode === 401) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({
-          isVerified: false,
-          error: "Access Forbidden",
-        }),
-      };
-    }
+    // const isVerified = await verifyUser(request);
+    // if (isVerified.statusCode === 401) {
+    //   return {
+    //     statusCode: 401,
+    //     body: JSON.stringify({
+    //       isVerified: false,
+    //       error: "Access Forbidden",
+    //     }),
+    //   };
+    // }
     const data = await dynamoDb.scan(params).promise();
     const response = {
       message: "Request successful",
