@@ -62,6 +62,13 @@ functions:
       - httpApi:
           path: /trade/{id}
           method: get
+  
+  currency :
+      handler: getCurrency.handler
+      events:
+        - httpApi:
+            path: /currencies
+            method: get
 
 resources:
   Resources:
