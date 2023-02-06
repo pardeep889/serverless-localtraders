@@ -1,7 +1,6 @@
 const utils = require("./utils");
 const AWS = require("aws-sdk");
 const { default: axios } = require("axios");
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = async (request) => {
 
@@ -15,7 +14,7 @@ module.exports.handler = async (request) => {
         'X-CMC_PRO_API_KEY': API_KEY
       }
     })
-    return utils.send(200, { message: "currencies retrieved successfully", data:currencies?.data.data });
+    return utils.send(200, { message: "currencies retrieved successfully", data:currencies?.data?.data });
   } catch (error) {
     return utils.send(400, { message: "Unable to retrieve currencies", error });
   }

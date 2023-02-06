@@ -11,9 +11,10 @@ module.exports.handler = async (event) => {
     let priceRangeFilter = event.queryStringParameters?.priceRange;
     let limit = event.queryStringParameters?.limit;
     let offset = event.queryStringParameters?.offset;
+    let paymentMethodFilter = event.queryStringParameters?.paymentMethod;
+    let currencyFilter = event.queryStringParameters?.currency;
 
-
-    if (!typeFilter && !payWithFilter && !locationFilter && !priceRangeFilter && !limit && !offset) {
+    if (!typeFilter && !payWithFilter && !locationFilter && !priceRangeFilter && !limit && !offset && !paymentMethodFilter && !currencyFilter) {
         const param1 = {
             TableName: "trading-offer",
             };
@@ -63,7 +64,23 @@ module.exports.handler = async (event) => {
         expressionAttributeNames[`#price`] = "price";
       }
 
+      if (paymentMethodFilter) {
+        if (filterExpression.length > 0) {
+          filterExpression += " and ";
+        }
+        filterExpression += `#paymentMethod = :paymentMethod${i}`;
+        expressionAttributeValues[`:paymentMethod${i}`] = paymentMethodFilter;
+        expressionAttributeNames[`#paymentMethod`] = "paymentMethod";
+      }
 
+      if (currencyFilter) {
+        if (filterExpression.length > 0) {
+          filterExpression += " and ";
+        }
+        filterExpression += `#currency = :currency${i}`;
+        expressionAttributeValues[`:currency${i}`] = currencyFilter;
+        expressionAttributeNames[`#currency`] = "currency";
+      }
     // retrieve filtered data from db
     const params = {
       TableName: "trading-offer",
