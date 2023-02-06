@@ -27,6 +27,7 @@ provider:
             - Fn::GetAtt: [ServiceProviderTable, Arn]
 
             - arn:aws:dynamodb:us-east-1:945677977841:table/UserTable
+            - arn:aws:dynamodb:us-east-1:945677977841:table/trading-offer
 
   environment:
     USERS_TABLE: AdminUser
@@ -119,6 +120,13 @@ functions:
       - httpApi:
           path: /admin/service-provider
           method: get
+
+  create-trade:
+    handler: create-trade.handler
+    events:
+      - httpApi:
+          path: /admin/trade
+          method: post
 
 resources:
   Resources:
