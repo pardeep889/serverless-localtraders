@@ -14,7 +14,17 @@ module.exports.handler = async (request) => {
         'X-CMC_PRO_API_KEY': API_KEY
       }
     })
-    return utils.send(200, { message: "currencies retrieved successfully", data:currencies?.data?.data });
+    
+    const targetSymbols = new Set(['lct', 'bnb', 'btc', 'eth','usdt','usdc','busd'].map((val) => val.toLowerCase()));
+    const result = currencies?.data?.data?.reduce((filtered, filterValue) => {
+      const { name, symbol } = filterValue;
+      if (targetSymbols.has(symbol.toLowerCase())) {
+        filtered.push(filterValue);
+      }
+      return filtered;
+    }, []);
+
+    return utils.send(200, { message: "currencies retrieved successfully", data:result });
   } catch (error) {
     return utils.send(400, { message: "Unable to retrieve currencies", error });
   }
