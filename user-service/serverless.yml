@@ -4,7 +4,7 @@ service: user-service
 frameworkVersion: "3"
 
 custom:
-  tableName: "UserTable"
+  tableName: "User"
 
 provider:
   name: aws
@@ -23,7 +23,7 @@ provider:
           Resource:
             - Fn::GetAtt: [UsersTable, Arn]
   environment:
-    USERS_TABLE: UserTable
+    USERS_TABLE: User
 Type: AWS::Logs::LogGroup
 Properties:
   DataProtectionPolicy: Json
@@ -78,6 +78,13 @@ functions:
           path: /users/login/verify
           method: post
 
+  email-verify:
+    handler: verify-email.handler
+    events:
+      - httpApi:
+          path: /user/email/verify/{token}
+          method: get
+
   refresh-token:
     handler: refresh-token.handler
     events:
@@ -90,20 +97,18 @@ resources:
     UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: UserTable
+        TableName: User
         AttributeDefinitions:
-          - AttributeName: UserId
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: email
             AttributeType: S
         KeySchema:
-          - AttributeName: UserId
+          - AttributeName: id
             KeyType: HASH
-        #  AttributeDefinitions:
-        #   - AttributeName: FirstName
-        #     AttributeType: S
-        #  AttributeDefinitions:
-        #   - AttributeName: LastName
-        #     AttributeType: S
-        # BillingMode:
+          - AttributeName: email
+            KeyType: RANGE
+
         ProvisionedThroughput:
           ReadCapacityUnits: 3
           WriteCapacityUnits: 3
