@@ -1,5 +1,7 @@
 const Responses = require('../common/API_Responses');
 const AWS = require('aws-sdk');
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
+
 
 const SNS = new AWS.SNS({ apiVersion: '2010-03-31' });
 
@@ -26,7 +28,14 @@ exports.handler = async event => {
     try {
         await SNS.setSMSAttributes(AttributeParams).promise();
         await SNS.publish(messageParams).promise();
-        return Responses._200({ message: 'text has been sent' });
+
+        const params = {
+            TableName: "User",
+         };
+          const data = await dynamoDb.scan(params).promise();
+          console.log("###dataa ####",data)
+         
+        return Responses._200({ message: 'text has been sent',data: data.Items});
     } catch (error) {
         console.log('error', error);
         return Responses._400({ message: 'text failed to send' });

@@ -8,6 +8,12 @@ provider:
           Action:
               - sns:SetSMSAttributes
               - sns:Publish
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
           Resource: '*'
 
 functions:
