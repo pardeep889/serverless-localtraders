@@ -9,6 +9,19 @@ const getToken = async (user, expiry) =>  jwt.sign(
     { expiresIn: expiry }
   );
 
+const decodeToken = async(val) =>{
+  try {
+    
+ 
+  if (val && val != undefined) {
+    const resp = await jwt.verify(val, SECRET_KEY);
+    console.log("#### resp #####", resp);
+    return resp
+  }
+} catch (error) {
+    return null
+}
+}
 
 const verifyUser = async (req) => {
   try {
@@ -55,4 +68,5 @@ module.exports = {
   getToken,
   verifyUser,
   send,
+  decodeToken
 };

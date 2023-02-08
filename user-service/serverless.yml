@@ -44,19 +44,19 @@ functions:
     handler: update.handler
     events:
       - httpApi:
-          path: /users/{userId}
+          path: /user/{id}
           method: put
   delete-user:
     handler: delete.handler
     events:
       - httpApi:
-          path: /users/{userId}
+          path: /user/{id}
           method: delete
   get-user:
     handler: get.handler
     events:
       - httpApi:
-          path: /users/{userId}
+          path: /user/{id}
           method: get
   list-users:
     handler: list.handler
@@ -84,6 +84,14 @@ functions:
       - httpApi:
           path: /user/email/verify/{token}
           method: get
+  
+  reset-password:
+    handler: reset-password.handler
+    events:
+      - httpApi:
+          path: /user/reset-password/{email}
+          method: post
+
 
   refresh-token:
     handler: refresh-token.handler
