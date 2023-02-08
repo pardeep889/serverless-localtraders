@@ -1,43 +1,78 @@
-const Responses = require('../common/API_Responses');
-const AWS = require('aws-sdk');
+const Responses = require("../common/API_Responses");
+const AWS = require("aws-sdk");
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
+const SNS = new AWS.SNS({ apiVersion: "2010-03-31" });
 
-const SNS = new AWS.SNS({ apiVersion: '2010-03-31' });
+function generateCode() {
+    return Math.floor(1000 + Math.random() * 9000);
+  }
 
-exports.handler = async event => {
-    console.log('event', event);
+exports.handler = async (event) => {
+  console.log("event", event);
 
-    const body = JSON.parse(event.body);
+  const body = JSON.parse(event.body);
 
-    if (!body || !body.phoneNumber || !body.message) {
-        return Responses._400({ message: 'missing phone number or messsage from the body' });
-    }
+  const code = generateCode();
 
-    const AttributeParams = {
-        attributes: {
-            DefaultSMSType: 'Promotional',
-        },
+  if (!body || !body.phoneNumber || !body.message || !body.email) {
+    return Responses._400({
+      message: "missing phone number or email or messsage from the body",
+    });
+  }
+
+ 
+  const AttributeParams = {
+    attributes: {
+      DefaultSMSType: "Promotional",
+    },
+  };
+
+  const messageParams = {
+    Message: body.message,
+    PhoneNumber: body.phoneNumber,
+  };
+
+  try {
+    await SNS.setSMSAttributes(AttributeParams).promise();
+    await SNS.publish(messageParams).promise();
+
+    // check if user exist in our db
+    const paramsScan = {
+      TableName: "User",
+      FilterExpression: "email = :email",
+      ExpressionAttributeValues: {
+        ":email": body.email,
+      },
     };
+    console.log(code)
 
-    const messageParams = {
-        Message: body.message,
-        PhoneNumber: body.phoneNumber,
-    };
+    const data = await dynamoDb.scan(paramsScan).promise();
+    if (data.Items.length > 0) {
+      const { id, email } = data.Items[0];
 
-    try {
-        await SNS.setSMSAttributes(AttributeParams).promise();
-        await SNS.publish(messageParams).promise();
+      // update isEmailVerified field
+      await dynamoDb
+        .update({
+          TableName: "User",
+          Key: { id, email },
+          UpdateExpression: "set #code = :code",
+          ExpressionAttributeValues: {
+            ":code": code,
+          },
+          ExpressionAttributeNames: {
+            "#code": "code",
+          },
+        })
+        .promise();
 
-        const params = {
-            TableName: "User",
-         };
-          const data = await dynamoDb.scan(params).promise();
-          console.log("###dataa ####",data)
-         
-        return Responses._200({ message: 'text has been sent',data: data.Items});
-    } catch (error) {
-        console.log('error', error);
-        return Responses._400({ message: 'text failed to send' });
+      return Responses._200({
+        message: "text has been sent",
+        data: data.Items,
+      });
     }
+  } catch (error) {
+    console.log("error", error);
+    return Responses._400({ message: "text failed to send" });
+  }
 };

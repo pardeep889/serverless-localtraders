@@ -24,3 +24,11 @@ functions:
                   path: send-sms
                   method: POST
                   cors: true
+
+    verifySMS:
+        handler: lambdas/endpoints/verifySMS.handler
+        events:
+            - http:
+                  path: verify-sms
+                  method: POST
+                  cors: true
