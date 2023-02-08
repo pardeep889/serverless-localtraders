@@ -1,5 +1,10 @@
 // const jwt = require("jsonwebtoken");
 // const SECRET_KEY = "MyAwesomeKey";
+
+const AWS = require("aws-sdk");
+const nodemailer = require("nodemailer");
+
+
 // const getToken = async (user, expiry) => {
 //   return jwt.sign(user, SECRET_KEY, {
 //     expiresIn: expiry,
@@ -22,6 +27,41 @@
 //   }
 // };
 
+const sendEmail = async(to,subject,content) =>{
+
+  try {
+    
+ 
+    // configure AWS SDK
+    AWS.config.update({
+      accessKeyId: "AKIA5YLWMZDY2UPJ4J7U",
+      secretAccessKey: "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",
+      region: "us-east-1",
+    });
+    // create Nodemailer SES transporter
+    let transporter = nodemailer.createTransport({
+      SES: new AWS.SES({
+        apiVersion: "2010-12-01",
+      }),
+    });
+
+    // send some mail
+    const result = await transporter.sendMail({
+      from: "verification@localtraders.finance",
+      to: to,
+      subject: subject,
+      html: content   });
+
+    return result
+  } catch (error) {
+    console.log("### email error ###",error)
+    return false
+  }
+
+}
+
+
+
 const send = (statusCode, data) => {
   const responseHeaders = {
     "Content-Type": "application/json",
@@ -41,4 +81,5 @@ module.exports = {
   // getToken,
   // verifyUser,
   send,
+  sendEmail
 };

@@ -92,6 +92,12 @@ functions:
           path: /user/reset-password/{email}
           method: post
 
+  reset-password-confirm:
+    handler: reset-password-confirm.handler
+    events:
+      - httpApi:
+          path: /user/reset-password-confirm/{token}
+          method: post
 
   refresh-token:
     handler: refresh-token.handler

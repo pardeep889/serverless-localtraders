@@ -37,7 +37,7 @@ module.exports.handler = async (req) => {
         });
       }
       const token = await getToken(email,'1 days')
-      const {password:pwd, ...resp } = data.Items[0];
+      const {password:pwd,passwordToken, ...resp } = data.Items[0];
    
       return utils.send(200, {
         data: {
@@ -54,6 +54,7 @@ module.exports.handler = async (req) => {
       });
     }
   } catch (error) {
+    console.log("### error ####",error)
     return utils.send(400, {
       isAuth: false,
       message: "something went wrong.",
