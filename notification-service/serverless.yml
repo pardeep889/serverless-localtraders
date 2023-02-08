@@ -15,7 +15,7 @@ provider:
               - dynamodb:UpdateItem
               - dynamodb:DeleteItem
           Resource:
-                - arn:aws:dynamodb:us-east-1:945677977841:table/User
+                - "*"
 
 
 functions:
