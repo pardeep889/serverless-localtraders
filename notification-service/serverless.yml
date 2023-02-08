@@ -1,0 +1,20 @@
+service: notification-service
+
+provider:
+    name: aws
+    runtime: nodejs14.x
+    iamRoleStatements:
+        - Effect: Allow
+          Action:
+              - sns:SetSMSAttributes
+              - sns:Publish
+          Resource: '*'
+
+functions:
+    sendSMS:
+        handler: lambdas/endpoints/sendSMS.handler
+        events:
+            - http:
+                  path: send-sms
+                  method: POST
+                  cors: true
