@@ -37,9 +37,22 @@ module.exports.handler = async (request) => {
       "market_cap_change_percentage_24h": newResp?.day.volume_change_pct,
       "ath_date": newResp?.meta?.price_timestamp,
       "last_updated": newResp?.meta?.price_timestamp,
+      "price_change_percentage_7d_in_currency": newResp?.week?.price_change,
+      "fully_diluted_valuation": 41577212120,
+      "total_volume": 3585289420,
+      "low_24h": 0.995022,
+      "circulating_supply": 41573818587.8173,
+      "total_supply": 41573063493.2984,
+      "max_supply": null,
+      "ath": 1.17,
+      "ath_change_percentage": -14.73218,
+      "atl": 0.891848,
+      "atl_change_percentage": 12.12011,
+      "roi": null,
       "sparkline_in_7d": {
         "price" : newResp?.history
       }
+   
     }
 
     return utils.send(200, { message: "currencies retrieved successfully", data:[...result,restructureResp] });
