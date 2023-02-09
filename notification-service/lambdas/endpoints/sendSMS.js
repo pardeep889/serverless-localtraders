@@ -24,7 +24,7 @@ exports.handler = async (event) => {
  
   const AttributeParams = {
     attributes: {
-      DefaultSMSType: "Promotional",
+      DefaultSMSType: "Transactional",
     },
   };
 
