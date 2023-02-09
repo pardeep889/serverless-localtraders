@@ -36,14 +36,16 @@ exports.handler = async event => {
           .update({
             TableName: "User",
             Key: { id, email },
-            UpdateExpression: "set #phoneNumber = :phoneNumber , #isPhoneVerified = :isPhoneVerified",
+            UpdateExpression: "set #phoneNumber = :phoneNumber , #isPhoneVerified = :isPhoneVerified, #code = :code",
             ExpressionAttributeValues: {
               ":phoneNumber": body.phoneNumber,
-              ":isPhoneVerified": true
+              ":isPhoneVerified": true,
+              ":code": ""
             },
             ExpressionAttributeNames: {
               "#phoneNumber": "phoneNumber",
-              "#isPhoneVerified" : "isPhoneVerified"
+              "#isPhoneVerified" : "isPhoneVerified",
+              "#code": "code"
             },
           })
           .promise();
