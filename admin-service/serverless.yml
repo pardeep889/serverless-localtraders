@@ -22,11 +22,10 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - Fn::GetAtt: [AdminTable, Arn]
-            - Fn::GetAtt: [PaymentMethod, Arn]
             - Fn::GetAtt: [PaymentCategory, Arn]
             - Fn::GetAtt: [ServiceProviderTable, Arn]
 
-            - arn:aws:dynamodb:us-east-1:945677977841:table/UserTable
+            - arn:aws:dynamodb:us-east-1:945677977841:table/User
             - arn:aws:dynamodb:us-east-1:945677977841:table/trading-offer
 
   environment:
@@ -143,24 +142,6 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 3
           WriteCapacityUnits: 3
-
-    PaymentMethod:
-      Type: "AWS::DynamoDB::Table"
-      Properties:
-        TableName: "PaymentMethod"
-        AttributeDefinitions:
-          - AttributeName: "category"
-            AttributeType: "S"
-          - AttributeName: "provider"
-            AttributeType: "S"
-        KeySchema:
-          - AttributeName: "category"
-            KeyType: "HASH"
-          - AttributeName: "provider"
-            KeyType: "RANGE"
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
 
     PaymentCategory:
       Type: "AWS::DynamoDB::Table"
