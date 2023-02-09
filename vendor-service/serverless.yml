@@ -95,7 +95,7 @@ functions:
     handler: reset-password.handler
     events:
       - httpApi:
-          path: /vendor/reset-password/{token}
+          path: /vendor/reset-password-new/{token}
           method: post
 
   change-password:
