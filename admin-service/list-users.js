@@ -7,8 +7,8 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 module.exports.handler = async (request) => {
   try {
     const params = {
-      TableName: "UserTable",
-      ProjectionExpression: "UserId,firstName,lastName, email",
+      TableName: "User",
+      ProjectionExpression: "id,firstname,lastname, email,isEmailVerified,isPhoneVerified,phoneNumber",
     };
 
     const isVerified = await verifyUser(request);
