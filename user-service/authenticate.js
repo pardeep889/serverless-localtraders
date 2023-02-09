@@ -6,7 +6,25 @@ const { getToken } = require("./token");
 
 module.exports.handler = async (req) => {
   try {
+    if (!req.body) {
+      return utils.send(400, {
+        message: "Missing password and email",
+      });
+    }
+
     let { email, password } = JSON.parse(req.body);
+
+    if (!email) {
+      return utils.send(400, {
+        message: "Missing email",
+      });
+    }
+
+    if (!password) {
+      return utils.send(400, {
+        message: "Missing Password",
+      });
+    }
 
     const params = {
       TableName: "User",
@@ -15,7 +33,7 @@ module.exports.handler = async (req) => {
         ":email": email,
       },
     };
-   
+
     const data = await dynamoDbClient.scan(params).promise();
     if (data.Items.length != 1) {
       return utils.send(404, {
@@ -27,7 +45,8 @@ module.exports.handler = async (req) => {
     }
     if (data.Items) {
       const isMatch =
-        CryptoJS.SHA256(password).toString() === data.Items[0].password.toString();
+        CryptoJS.SHA256(password).toString() ===
+        data.Items[0].password.toString();
       if (!isMatch) {
         return utils.send(400, {
           data: {
@@ -36,29 +55,28 @@ module.exports.handler = async (req) => {
           },
         });
       }
-      const token = await getToken(email,'1 days')
-      const {password:pwd,passwordToken, ...resp } = data.Items[0];
-   
+      const token = await getToken(email, "1 days");
+      const { password: pwd, passwordToken, ...resp } = data.Items[0];
+
       return utils.send(200, {
         data: {
           isAuth: true,
-          user : {...resp,token}
+          user: { ...resp, token },
         },
       });
-    }else{ 
+    } else {
       return utils.send(400, {
         data: {
           isAuth: false,
-          user : 'Username or password is wrong'
+          user: "Username or password is wrong",
         },
       });
     }
   } catch (error) {
-    console.log("### error ####",error)
     return utils.send(400, {
       isAuth: false,
       message: "something went wrong.",
-      error: "For development check cloudwatch logs"
+      error: "For development check cloudwatch logs",
     });
   }
 };

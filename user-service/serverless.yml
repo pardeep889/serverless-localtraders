@@ -106,6 +106,13 @@ functions:
           path: /users/refresh
           method: post
 
+  change-password:
+    handler: change-password.handler
+    events:
+      - httpApi:
+          path: /user/change-password
+          method: post
+
 resources:
   Resources:
     UsersTable:
