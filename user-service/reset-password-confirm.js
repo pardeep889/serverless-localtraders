@@ -75,12 +75,12 @@ module.exports.handler = async (request) => {
 
       if (emailResponse?.messageId) {
         return utils.send(200, {
-          message: "reset-password link sent successfully",
+          message: "password changed successfully",
           isEmailSend: true,
         });
       }
       return utils.send(400, {
-        message: "reset-password link not sent",
+        message: "passwod changed successfully",
         isEmailSend: false,
       });
     }
