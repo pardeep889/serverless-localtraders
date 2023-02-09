@@ -55,7 +55,7 @@ exports.handler = async event => {
       }
   
       return Responses._400({
-        message: "User with this email not exists",
+        message: "either email or code is not matched",
         isPhoneVerified: false,
       });
 

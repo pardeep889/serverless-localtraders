@@ -29,7 +29,7 @@ exports.handler = async (event) => {
   };
 
   const messageParams = {
-    Message: code,
+    Message: ""+code,
     PhoneNumber: body.phoneNumber,
   };
 
