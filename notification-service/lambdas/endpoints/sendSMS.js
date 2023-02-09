@@ -15,9 +15,9 @@ exports.handler = async (event) => {
 
   const code = generateCode();
 
-  if (!body || !body.phoneNumber || !body.message || !body.email) {
+  if (!body || !body.phoneNumber || !body.email) {
     return Responses._400({
-      message: "missing phone number or email or messsage from the body",
+      message: "missing phone number or email from the body",
     });
   }
 
@@ -29,7 +29,7 @@ exports.handler = async (event) => {
   };
 
   const messageParams = {
-    Message: body.message,
+    Message: code,
     PhoneNumber: body.phoneNumber,
   };
 
@@ -68,7 +68,7 @@ exports.handler = async (event) => {
 
       return Responses._200({
         message: "text has been sent",
-        data: data.Items,
+        otp: code,
       });
     }
   } catch (error) {
