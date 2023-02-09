@@ -1,24 +1,21 @@
 service: notification-service
 
 provider:
-  name: aws
-  runtime: nodejs14.x
-  iam:
-    role:
-      statements:
+    name: aws
+    runtime: nodejs14.x
+    iamRoleStatements:
         - Effect: Allow
           Action:
-            - sns:SetSMSAttributes
-            - sns:Publish
-            - dynamodb:Query
-            - dynamodb:Scan
-            - dynamodb:GetItem
-            - dynamodb:PutItem
-            - dynamodb:UpdateItem
-            - dynamodb:DeleteItem
-          Resource:
-            - "*"
-          
+              - sns:SetSMSAttributes
+              - sns:Publish
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+          Resource: '*'
+
 functions:
     sendSMS:
         handler: lambdas/endpoints/sendSMS.handler
