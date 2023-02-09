@@ -1,0 +1,126 @@
+
+service: vendor-service
+frameworkVersion: "3"
+
+custom:
+  tableName: "Vendor"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [VendorsTable, Arn]
+  environment:
+    USERS_TABLE: Vendor
+Type: AWS::Logs::LogGroup
+Properties:
+  DataProtectionPolicy: Json
+  KmsKeyId: String
+  LogGroupName: String
+  RetentionInDays: Integer
+  Tags:
+    - Tag
+
+functions:
+  create-vendor:
+    handler: create.handler
+    events:
+      - httpApi:
+          path: /vendor
+          method: post
+  update-vendor:
+    handler: update.handler
+    events:
+      - httpApi:
+          path: /vendor/{id}
+          method: put
+  delete-vendor:
+    handler: delete.handler
+    events:
+      - httpApi:
+          path: /vendor/{id}
+          method: delete
+  get-vendor:
+    handler: get.handler
+    events:
+      - httpApi:
+          path: /vendor/{id}
+          method: get
+  list-users:
+    handler: list.handler
+    events:
+      - httpApi:
+          path: /vendors
+          method: get
+  login:
+    handler: login.handler
+    events:
+      - httpApi:
+          path: /vendor/login
+          method: post
+
+  login-confirm:
+    handler: authenticate-confirm.handler
+    events:
+      - httpApi:
+          path: /vendor/login/verify
+          method: post
+
+  email-verify:
+    handler: verify-email.handler
+    events:
+      - httpApi:
+          path: /vendor/email/verify/{token}
+          method: get
+  
+  forgot-password:
+    handler: forgot-password.handler
+    events:
+      - httpApi:
+          path: /vendor/forgot-password/{email}
+          method: post
+
+  reset-password:
+    handler: reset-password.handler
+    events:
+      - httpApi:
+          path: /vendor/reset-password/{token}
+          method: post
+
+  change-password:
+    handler: change-password.handler
+    events:
+      - httpApi:
+          path: /vendor/change-password
+          method: post
+
+resources:
+  Resources:
+    VendorsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Vendor
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
+
+plugins:
+  - serverless-offline
