@@ -17,9 +17,7 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - Fn::GetAtt: [WalletTable, Arn]
-
-            - arn:aws:dynamodb:us-east-1:945677977841:table/User
-            - arn:aws:dynamodb:us-east-1:945677977841:table/trading-offer
+            - arn:aws:dynamodb:us-east-1:945677977841:table/Asset
 
 
 functions:
