@@ -1,5 +1,7 @@
 'use strict';
 
+const TABLE_NAME = "Wallet";
+
 const send = (statusCode, data) => {
   const responseHeaders = {
     'Content-Type': 'application/json',
@@ -20,5 +22,6 @@ const send = (statusCode, data) => {
 };
 
 module.exports = {
-    send
+    send,
+    TABLE_NAME
 }

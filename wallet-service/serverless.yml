@@ -4,17 +4,30 @@ frameworkVersion: "3"
 provider:
   name: aws
   runtime: nodejs14.x
-  httpApi:
-    id: !ImportValue MockNearAppsHttpApiId
-  stage: dev
-  region: ${file(../serverless-config.json):region}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [WalletTable, Arn]
+
+            - arn:aws:dynamodb:us-east-1:945677977841:table/User
+            - arn:aws:dynamodb:us-east-1:945677977841:table/trading-offer
+
 
 functions:
   create-wallet:
     handler: create.handler
     events:
       - httpApi:
-          path: /wallets
+          path: /wallet
           method: post
   list-wallet:
     handler: list.handler
@@ -32,8 +45,24 @@ functions:
     handler: get.handler
     events:
       - httpApi:
-          path: /wallets/{walletId}
+          path: /wallet/{walletId}
           method: get
 
-# plugins:
-#   - serverless-offline
+resources:
+  Resources:
+    WalletTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Wallet
+        AttributeDefinitions:
+          - AttributeName: walletId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: walletId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
+
+plugins:
+  - serverless-offline
