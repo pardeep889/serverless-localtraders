@@ -9,21 +9,36 @@ module.exports.handler = async (event) => {
     });
   }
   const body = JSON.parse(event.body);
-  console.log("## body @### ", body);
-  if (!body?.userId || !body?.balance) {
+  if (!body?.userId) {
     return utils.send(400, {
-      message: "missing userId, balance or isWalletActive from the body",
+      message: "missing userId from the body",
     });
   }
-  let { userId, balance, isWalletActive } = body;
+  let { userId } = body;
 
   try {
+    const walletParams = {
+      TableName: utils.TABLE_NAME,
+      FilterExpression: "userId = :userId",
+      ExpressionAttributeValues: {
+        ":userId": userId,
+      },
+    };
+
+    const isWalletAlreadyExists = await dynamoDbClient
+      .scan(walletParams)
+      .promise();
+    if (isWalletAlreadyExists.Items.length) {
+      return utils.send(200, {
+        message: "user already created the wallet",
+      });
+    }
+
     const id = Date.now() + Math.random().toString(36).substring(2, 15);
     const walletData = {
       walletId: id,
       userId,
-      balance,
-      isWalletActive,
+      isWalletActive: false,
     };
 
     const params = {
