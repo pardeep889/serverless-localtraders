@@ -1,5 +1,3 @@
-# org: rajatdua
-# app: aws-node-http-api-project
 service: admin-service
 frameworkVersion: "3"
 

@@ -1,0 +1,64 @@
+service: asset-service
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [AssetTable, Arn]
+
+functions:
+  create-asset:
+    handler: create.handler
+    events:
+      - httpApi:
+          path: /asset
+          method: post
+  list-asset:
+    handler: list.handler
+    events:
+      - httpApi:
+          path: /assets/list/{userId}
+          method: get
+  delete-asset:
+    handler: delete.handler
+    events:
+      - httpApi:
+          path: /assets/{assetId}
+          method: delete
+  get-asset:
+    handler: get.handler
+    events:
+      - httpApi:
+          path: /asset/{assetId}
+          method: get
+
+resources:
+  Resources:
+    AssetTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Asset
+        AttributeDefinitions:
+          - AttributeName: assetId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: assetId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
+
+plugins:
+  - serverless-offline
