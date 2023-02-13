@@ -21,7 +21,13 @@ module.exports.handler = async (request) => {
     const data = await dynamoDb.get(params).promise();
     console.log({data})
 
-    return utils.send(200, { message: "Fund retrieved successfully", data:data?.Item || {}});
+    if (!data.Item) {
+        return utils.send(404, {
+          message: `Fund with id ${id} not found`,
+          data: {},
+        });
+      }
+    return utils.send(200, { message: "Fund retrieved successfully", data:data?.Item});
   } catch (error) {
     return utils.send(400, { message: "Unable to retrieve fund", error });
   }
