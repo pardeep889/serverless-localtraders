@@ -17,6 +17,8 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - Fn::GetAtt: [AssetTable, Arn]
+            - arn:aws:dynamodb:us-east-1:945677977841:table/Wallet
+
 
 functions:
   create-asset:
@@ -43,6 +45,13 @@ functions:
       - httpApi:
           path: /asset/{assetId}
           method: get
+
+  create-all:
+    handler: create-all.handler
+    events:
+      - httpApi:
+          path: /asset/all
+          method: post
 
 resources:
   Resources:
