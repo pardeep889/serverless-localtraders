@@ -23,13 +23,15 @@ module.exports.handler = async (event) => {
   }
   let { userId, balance, assetName, address, symbol, logoUrl } = body;
 
+  const symbol_lowerCase = symbol?.toLowerCase()
+  console.log({symbol_lowerCase})
   try {
     // check if user exist in our db
     const paramsScan = {
       TableName: utils.TABLE_NAME,
       FilterExpression: "symbol = :symbol and userId = :userId",
       ExpressionAttributeValues: {
-        ":symbol": symbol,
+        ":symbol": symbol_lowerCase,
         ":userId": userId,
       },
     };
@@ -49,7 +51,7 @@ module.exports.handler = async (event) => {
       balance,
       assetName,
       address,
-      symbol,
+      symbol: symbol_lowerCase,
       logoUrl,
     };
 
