@@ -1,0 +1,67 @@
+
+service: funds-management-service
+frameworkVersion: "3"
+
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [FundsTable, Arn]
+            - arn:aws:dynamodb:us-east-1:945677977841:table/Wallet
+            - arn:aws:dynamodb:us-east-1:945677977841:table/Asset
+            - arn:aws:dynamodb:us-east-1:945677977841:table/User
+
+Type: AWS::Logs::LogGroup
+Properties:
+  DataProtectionPolicy: Json
+  KmsKeyId: String
+  LogGroupName: String
+  RetentionInDays: Integer
+  Tags:
+    - Tag
+
+functions:
+  add-funds:
+    handler: add-funds.handler
+    events:
+      - httpApi:
+          path: /add-funds
+          method: post
+
+  list-funds:
+    handler: list.handler
+    events:
+      - httpApi:
+          path: /list
+          method: get
+
+resources:
+  Resources:
+    FundsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Add-Funds
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
+
+plugins:
+  - serverless-offline
