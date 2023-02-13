@@ -40,13 +40,20 @@ functions:
           path: /add-funds
           method: post
 
-  list-funds:
+  list:
     handler: list.handler
     events:
       - httpApi:
-          path: /list
+          path: /funds/list
           method: get
 
+
+  get:
+    handler: get.handler
+    events:
+      - httpApi:
+          path: /fund/{id}
+          method: get
 resources:
   Resources:
     FundsTable:
