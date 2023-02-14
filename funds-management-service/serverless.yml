@@ -23,14 +23,8 @@ provider:
             - arn:aws:dynamodb:us-east-1:945677977841:table/Asset
             - arn:aws:dynamodb:us-east-1:945677977841:table/User
 
-Type: AWS::Logs::LogGroup
-Properties:
-  DataProtectionPolicy: Json
-  KmsKeyId: String
-  LogGroupName: String
-  RetentionInDays: Integer
-  Tags:
-    - Tag
+  httpApi:
+    cors: true
 
 functions:
   add-funds:
