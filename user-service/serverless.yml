@@ -28,14 +28,10 @@ provider:
 
   environment:
     USERS_TABLE: User
-Type: AWS::Logs::LogGroup
-Properties:
-  DataProtectionPolicy: Json
-  KmsKeyId: String
-  LogGroupName: String
-  RetentionInDays: Integer
-  Tags:
-    - Tag
+
+  httpApi:
+    cors: true
+
 
 functions:
   create-user:
