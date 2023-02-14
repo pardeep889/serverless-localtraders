@@ -1,14 +1,14 @@
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = "MyAwesomeKey";
 
-const getToken = async (user, expiry) =>  jwt.sign(
+const getToken = async (user, expiry) =>
+  jwt.sign(
     {
       data: user,
     },
     SECRET_KEY,
     { expiresIn: expiry }
   );
-
 
 const verifyUser = async (req) => {
   try {
@@ -23,25 +23,25 @@ const verifyUser = async (req) => {
       };
     }
     return {
-        statusCode: 401,
-        body: JSON.stringify({ isVerified: false }),
-      };
+      statusCode: 401,
+      body: JSON.stringify({ isVerified: false }),
+    };
   } catch (error) {
     return {
       statusCode: 401,
-      body: JSON.stringify({ isVerified: false, error:error?.message }),
+      body: JSON.stringify({ isVerified: false, error: error?.message }),
     };
   }
 };
 
 const send = (statusCode, data) => {
   const responseHeaders = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     // Required for CORS support to work
-    'Access-Control-Allow-Origin': '*',  
+    "Access-Control-Allow-Origin": "*",
     // Required for cookies, authorization headers with HTTPS
-    'Access-Control-Allow-Credentials': true,
-    'Access-Control-Allow-Methods': '*'
+    "Access-Control-Allow-Credentials": true,
+    "Access-Control-Allow-Methods": "*",
   };
 
   return {
@@ -51,21 +51,24 @@ const send = (statusCode, data) => {
   };
 };
 
-const decodeToken = async(val) =>{
+const decodeToken = async (val) => {
   try {
-
-  if (val && val != undefined) {
-    const resp = await jwt.verify(val, SECRET_KEY);
-    console.log("#### resp #####", resp);
-    return resp
+    if (val && val != undefined) {
+      const resp = await jwt.verify(val, SECRET_KEY);
+      return {
+        isVerified: true,
+        data: resp.data,
+      };
+    }
+  } catch (error) {
+    return {
+      isVerified: false,
+    };
   }
-} catch (error) {
-    return null
-}
-}
+};
 module.exports = {
   getToken,
   verifyUser,
   send,
-  decodeToken
+  decodeToken,
 };

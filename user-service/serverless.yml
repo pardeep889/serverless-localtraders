@@ -113,6 +113,15 @@ functions:
           path: /user/change-password
           method: post
 
+  verify-user:
+    handler: verify-user.handler
+    events:
+      - httpApi:
+          path: /verify-user/{token}
+          method: get
+
+
+
 resources:
   Resources:
     UsersTable:
