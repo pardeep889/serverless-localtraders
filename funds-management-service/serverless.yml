@@ -48,6 +48,14 @@ functions:
       - httpApi:
           path: /fund/{id}
           method: get
+
+
+  transfer-funds:
+    handler: transfer-funds.handler
+    events:
+      - httpApi:
+          path: /transfer-funds
+          method: post
 resources:
   Resources:
     FundsTable:

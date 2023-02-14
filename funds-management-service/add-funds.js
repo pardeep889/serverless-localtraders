@@ -60,7 +60,6 @@ module.exports.handler = async (request) => {
 
     // check if user exits
     const user = await getUser(email);
-    console.log("### user ####", user);
     if (!user) {
       return utils.send(404, {
         message: "user with this email does not exist",
@@ -69,7 +68,6 @@ module.exports.handler = async (request) => {
 
     // check if symbol exits for this user
     const asset = await checkIfAssetExitsForSymbol(symbol_lowerCase, user.id);
-    console.log("#### asset ###", asset);
 
     if (!asset) {
       return utils.send(404, {
