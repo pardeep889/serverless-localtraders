@@ -3,12 +3,12 @@ const AWS = require("aws-sdk");
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-const getUser = async (id) => {
+const getUser = async (email) => {
   const params = {
     TableName: "User",
-    FilterExpression: "id = :id",
+    FilterExpression: "email = :email",
     ExpressionAttributeValues: {
-      ":id": id,
+      ":email": email,
     },
   };
   const result = await dynamoDb.scan(params).promise();
@@ -49,31 +49,31 @@ module.exports.handler = async (request) => {
       });
     }
 
-    if (!funds.userId || !funds.symbol || !funds.amount) {
+    if (!funds.email || !funds.symbol || !funds.amount) {
       return utils.send(400, {
-        message: "missing userId, symbol or amount the body",
+        message: "missing email, symbol or amount the body",
       });
     }
 
-    let { symbol, amount, userId } = funds;
+    let { symbol, amount, email } = funds;
     const symbol_lowerCase = symbol.toLowerCase();
 
     // check if user exits
-    const user = await getUser(userId);
+    const user = await getUser(email);
     console.log("### user ####", user);
     if (!user) {
       return utils.send(404, {
-        message: "user with this userId does not exist",
+        message: "user with this email does not exist",
       });
     }
 
     // check if symbol exits for this user
-    const asset = await checkIfAssetExitsForSymbol(symbol_lowerCase, userId);
+    const asset = await checkIfAssetExitsForSymbol(symbol_lowerCase, user.id);
     console.log("#### asset ###", asset);
 
     if (!asset) {
       return utils.send(404, {
-        message: "user with this symbol does not exist",
+        message: `user with email ${email} does not have this ${symbol}`,
       });
     }
     //   update balance for request symbol
@@ -99,7 +99,9 @@ module.exports.handler = async (request) => {
 
     const fundsData = {
       id,
-      to: userId,
+      recipient_id: user.id,
+      recipient_email : user?.email,
+      recipient_name :  user?.firstname +" "+ user?.lastname,
       amount,
       symbol: symbol_lowerCase,
       added_on,
