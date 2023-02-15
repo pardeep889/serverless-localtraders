@@ -99,6 +99,7 @@ const initalizeWallet = async (userId) => {
         ":userId": userId,
       },
     };
+   
 
     const isWalletAlreadyExists = await dynamoDbClient
       .scan(walletParams)

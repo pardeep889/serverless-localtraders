@@ -7,14 +7,11 @@ const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 module.exports.handler = async (event) => {
   const user = JSON.parse(event.body);
   let { firstName, lastName, email, password } = user;
-
-  const id = Date.now() + Math.random().toString(36).substring(2, 15);
-  let isMessageSent = false;
+  let isMailSent = false;
   let token = undefined;
 
   try {
     const hashedPassword = CryptoJS.SHA256(password).toString();
-
     if (!user) {
       return utils.send(400, {
         message: event.body,
@@ -22,12 +19,10 @@ module.exports.handler = async (event) => {
       });
     }
     const USER = {
-      id: id,
       firstname: firstName,
       lastname: lastName,
       email: email,
       password: hashedPassword,
-      isEmailVerified: false,
       isPhoneVerified: false,
       phone: undefined,
     };
@@ -50,15 +45,7 @@ module.exports.handler = async (event) => {
       });
     }
 
-    // add user to db
-    const params = {
-      TableName: "User",
-      Item: USER,
-    };
-
-    await dynamoDbClient.put(params).promise();
-    token = await getToken(email, "1 days");
-    const { password: pwd, ...resp } = USER;
+    token = await getToken(USER, "5m");
 
     // // sent verification email
     // const live = "https://8gtef0v2qd.execute-api.us-east-1.amazonaws.com/user"
@@ -71,34 +58,19 @@ module.exports.handler = async (event) => {
     );
 
     console.log({token})
+    console.log("####### email response #######",emailResponse)
     if (emailResponse?.messageId) {
-      isMessageSent = true;
+      isMailSent = true;
     }
 
-    // wallet setup
-    try {
-      await utils.initalizeWallet(id);
-      await utils.createAssetsForUser(id);
-    } catch (error) {
-      return utils.send(200, {
-        message: "issue occured while intialize the wallet",
-        data: {
-          user: { id, ...resp },
-          token,
-          isMessageSent,
-        },
-      });
-    }
-
-    return utils.send(200, {
-      data: { ...resp, token, isMessageSent },
-    });
+    return utils.send(200, { isMailSent });
   } catch (error) {
     console.log("### error ####", "" + error.code);
+
     if (error?.code === "MessageRejected") {
       return utils.send(200, {
         message: "user created successfully",
-        data: { ...user, isMessageSent, token },
+        isMailSent,
       });
     }
 
