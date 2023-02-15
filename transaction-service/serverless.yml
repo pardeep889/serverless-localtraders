@@ -1,0 +1,68 @@
+
+service: transaction-service
+frameworkVersion: "3"
+
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [TransactionTable, Arn]
+            - arn:aws:dynamodb:us-east-1:945677977841:table/Wallet
+            - arn:aws:dynamodb:us-east-1:945677977841:table/Asset
+            - arn:aws:dynamodb:us-east-1:945677977841:table/User
+
+  httpApi:
+    cors: true
+    
+functions:
+  create:
+    handler: create.handler
+    events:
+      - httpApi:
+          path: /trxn/create
+          method: post
+
+  list:
+    handler: list.handler
+    events:
+      - httpApi:
+          path: /trxn/list
+          method: get
+
+
+  get:
+    handler: get.handler
+    events:
+      - httpApi:
+          path: /trxn/{id}
+          method: get
+resources:
+  Resources:
+    TransactionTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Transaction
+        AttributeDefinitions:
+          - AttributeName: trxn_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: trxn_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
+
+plugins:
+  - serverless-offline
