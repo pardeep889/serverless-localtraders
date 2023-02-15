@@ -1,13 +1,12 @@
 const utils = require("./utils");
 const AWS = require("aws-sdk");
+const { default: axios } = require("axios");
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 async function retrieveAssetBalance(id, symbol) {
   // Code to retrieve sender's balance with symbol from database goes here
   try {
-    console.log({ id, symbol });
-
     const paramsScan = {
       TableName: "Asset",
       FilterExpression: "symbol = :symbol and userId = :userId",
@@ -18,10 +17,8 @@ async function retrieveAssetBalance(id, symbol) {
     };
 
     const data = await dynamoDb.scan(paramsScan).promise();
-    console.log({ data });
     return data.Items[0];
   } catch (error) {
-    console.log({ error });
     throw new Error(error);
   }
 }
@@ -42,15 +39,36 @@ async function updateBalance(assetId, updatedBalance) {
     };
     await dynamoDb.update(paramsUpdate).promise();
   } catch (error) {
-    console.log("upated error", { error });
     throw new Error(error);
   }
 }
-async function createTransaction(recipient_id) {
-  // Code to retrieve recipient's balance from database goes here
+async function createTransaction(from, to, amount, symbol, type) {
+  try {
+    const trxn_id =
+      "trxn-" + Date.now() + Math.random().toString(36).substring(2, 15);
+    const timestamp = "" + Date.now();
+
+    const trxnData = {
+      trxn_id,
+      to,
+      from,
+      type,
+      amount,
+      symbol,
+      timestamp,
+    };
+
+    const params = {
+      TableName: "Transaction",
+      Item: trxnData,
+    };
+
+    await dynamoDb.put(params).promise();
+  } catch (error) {
+    console.log({error})
+    throw new Error("something went wrong while creating the transaction");
+  }
 }
-
-
 
 module.exports.handler = async (request) => {
   try {
@@ -119,14 +137,26 @@ module.exports.handler = async (request) => {
     await updateBalance(senderResp.assetId, updated_balance_of_sender);
     await updateBalance(receipientResp.assetId, updated_balance_of_receiver);
 
+    // create transactions
+    await createTransaction(sender_id, recipient_id, amount, symbol, "debit");
+    await createTransaction(sender_id, recipient_id, amount, symbol, "credit");
+
     //   update balance for request symbo
     return utils.send(200, {
       message: "transfer success",
+      isTrxnCreated: true,
     });
   } catch (error) {
     console.log("####### vvvv #####", { error });
+    if (error.toString().includes("transaction")) {
+      return utils.send(200, {
+        message: "transfer success",
+        error: error + "",
+        isTrxnCreated: false,
+      });
+    }
     return utils.send(400, {
-      message: "Unable to add funds. something went wrong",
+      message: "Unable to transfer funds. something went wrong",
       error: "" + error,
     });
   }
