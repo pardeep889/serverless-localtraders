@@ -41,12 +41,18 @@ functions:
           path: /trxn/list
           method: get
 
-
   get:
     handler: get.handler
     events:
       - httpApi:
           path: /trxn/{id}
+          method: get
+          
+  get-user-trxn:
+    handler: get-user-trxns.handler
+    events:
+      - httpApi:
+          path: /trxn/user/{userId}
           method: get
 resources:
   Resources:
