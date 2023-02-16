@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const SECRET_KEY = "MyAwesomeKey";
+const SECRET_KEY = "1CqYItlDxnxWbVUaT18lFHVTNA7kFgDvy5Qcbuzif4tIaa0137admin";
 
 const getToken = async (user, expiry) =>  jwt.sign(
     {
