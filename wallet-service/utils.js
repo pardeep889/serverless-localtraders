@@ -7,6 +7,8 @@ const send = (statusCode, data) => {
     'Content-Type': 'application/json',
     // Required for CORS support to work
     'Access-Control-Allow-Origin': '*',  
+    'Access-Control-Allow-Methods': '*',
+
     // Required for cookies, authorization headers with HTTPS
     'Access-Control-Allow-Credentials': true
   };
