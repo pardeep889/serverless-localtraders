@@ -3,6 +3,9 @@ service: funds-management-service
 frameworkVersion: "3"
 
 
+custom:
+  documentation: ${file(serverless.doc.yml):documentation}
+
 provider:
   name: aws
   runtime: nodejs14.x
@@ -58,6 +61,14 @@ functions:
       - httpApi:
           path: /transfer-funds
           method: post
+
+  swagger-docs:
+    handler: swagger-docs.handler
+    events:
+      - httpApi:
+          path: /swagger-docs
+          method: get
+
 resources:
   Resources:
     FundsTable:
@@ -76,3 +87,4 @@ resources:
 
 plugins:
   - serverless-offline
+  - serverless-openapi-documentation

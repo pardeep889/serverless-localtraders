@@ -1,0 +1,362 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "LocalTraders API's"
+    },
+    "servers": [
+        {
+            "url": "https://8gtef0v2qd.execute-api.us-east-1.amazonaws.com"
+        },
+        {
+            "url": "https://3p4sfu8qxh.execute-api.us-east-1.amazonaws.com"
+        }
+    ],
+    "tags": [
+ 
+        {
+            "name": "user",
+            "description": "Everything about user"
+        },
+        {
+            "name": "admin",
+            "description": "Everything about admin"
+        },
+        {
+            "name": "vendor",
+            "description": "Everything about vendor"
+        }
+    ],
+    "paths": {
+
+        "/user": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "register user",
+                "operationId": "createUser",
+                "requestBody": {
+                    "description": "Created user object",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/login": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "Logs user into the system",
+                "operationId": "loginUser",
+                "parameters": [],
+                "requestBody": {
+                    "description": "login user object",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserLogin"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json":{}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid email/password supplied"
+                    },
+                    "404" :{
+                        "description":"email not found"
+                    }
+                }
+            }
+        },
+        "/user/email/verify/{token}": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "description": "Verify user email with token which is send to your email",
+                "operationId": "verifyUserEmail",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "description": "extract the token from the link which is send to your email this token is valid for 5 min.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid token"
+                    },
+                    "404": {
+                        "description": "something went wrong"
+                    }
+                }
+            }
+        },
+        "/user/reset-password/{email}": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "send the reset-password link to the user email.",
+                "operationId": "reset-password",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "reset-password link sent successfully"
+                    },
+                    "400": {
+                        "description": "reset-password link not sent"
+                    },
+                    "404": {
+                        "description": "User with this email not exists"
+                    }
+                }
+            }
+        },
+        "/user/reset-password-confirm/{token}": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "send the reset-password link to the user email.",
+                "operationId": "reset-password-confirm",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "new password",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                          
+                                    "newPassword": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "reset-password  successfully"
+                    },
+                    "400": {
+                        "description": "Unable to reset password. something went wrong"
+                    },
+                    "404": {
+                        "description": "User with this email not exists"
+                    }
+                }
+            }
+        },
+        "/user/change-password": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "send the reset-password link to the user email.",
+                "operationId": "change-password",
+                "requestBody": {
+                    "description": "change password , old password should be matched",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/changePassword"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password changed successfully"
+                    },
+                    "400": {
+                        "description": "Unable to change password. something went wrong"
+                    },
+                    "404": {
+                        "description": "User with this email not exists"
+                    }
+                }
+            }
+        },
+        "/verify-user/{token}": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "description": "Verify user with token.",
+                "operationId": "verifyUserWithToken",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "description": "This token is check if user is login or not.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "user verified"
+                    },
+                    "400": {
+                        "description": "Invalid token"
+                    },
+                    "404": {
+                        "description": "something went wrong"
+                    }
+                }
+            }
+        }
+
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "type": "object",
+                "properties": {
+
+                    "firstName": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "James"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "john@email.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "12345"
+                    }
+                },
+                "xml": {
+                    "name": "user"
+                }
+            },
+            "UserLogin": {
+                "type": "object",
+                "properties": {
+          
+                    "email": {
+                        "type": "string",
+                        "example": "gurpreet.xpertiks@gmail.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "123456"
+                    }
+                }
+            },
+            "changePassword": {
+                "type": "object",
+                "properties": {
+          
+                    "email": {
+                        "type": "string",
+                        "example": "gurpreet.xpertiks@gmail.com"
+                    },
+                    "oldPassword": {
+                        "type": "string",
+                        "example": "123456"
+                    },
+                    "newPassword": {
+                        "type": "string",
+                        "example": "123456"
+                    }
+                }
+            }
+        },
+        "requestBodies": {
+            "UserArray": {
+                "description": "List of user object",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "petstore_auth": {
+                "type": "oauth2",
+                "flows": {
+                    "implicit": {
+                        "authorizationUrl": "https://petstore3.swagger.io/oauth/authorize",
+                        "scopes": {
+                            "write:pets": "modify pets in your account",
+                            "read:pets": "read your pets"
+                        }
+                    }
+                }
+            },
+            "api_key": {
+                "type": "apiKey",
+                "name": "api_key",
+                "in": "header"
+            }
+        }
+    }
+}
