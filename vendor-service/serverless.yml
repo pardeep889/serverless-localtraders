@@ -23,6 +23,9 @@ provider:
             - Fn::GetAtt: [VendorsTable, Arn]
   environment:
     USERS_TABLE: Vendor
+    
+  httpApi:
+    cors: true
 Type: AWS::Logs::LogGroup
 Properties:
   DataProtectionPolicy: Json
