@@ -1,31 +1,7 @@
-// const jwt = require("jsonwebtoken");
-// const SECRET_KEY = "MyAwesomeKey";
 
 const AWS = require("aws-sdk");
 const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 
-
-// const getToken = async (user, expiry) => {
-//   return jwt.sign(user, SECRET_KEY, {
-//     expiresIn: expiry,
-//   });
-// };
-// const verifyUser = async (req) => {
-//   //   const SECRET_KEY = "MyAwesomeKey";
-//   let token = req.headers["Authorization"];
-//   if (token) {
-//     jwt.verify(token, SECRET_KEY, function (err, decoded) {
-//       if (err) {
-//         console.log(err);
-//       } else {
-//         req.decoded = decoded;
-//         console.log("all good");
-//       }
-//     });
-//   } else {
-//     console.log("mmmm");
-//   }
-// };
 
 const assets = [
   { symbol: "btc", assetName: "Bitcoin", balance: 0 },
@@ -36,8 +12,6 @@ const assets = [
   { symbol: "usdc", assetName: "USD COIN", balance: 0 },
   { symbol: "busd", assetName: "Binance USD", balance: 0 },
 ];
-
-
 
 
 const send = (statusCode, data) => {
@@ -126,8 +100,6 @@ async function createAssetsForUser(userId) {
 }
 
 module.exports = {
-  // getToken,
-  // verifyUser,
   send,
   initalizeWallet,
   createAssetsForUser,
