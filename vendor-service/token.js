@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = "MyAwesomeKey";
+const ADMIN_SECRET_KEY = "1CqYItlDxnxWbVUaT18lFHVTNA7kFgDvy5Qcbuzif4tIaa0137admin";
+
 
 const getToken = async (user, expiry) =>  jwt.sign(
     {
@@ -15,6 +17,30 @@ const verifyUser = async (req) => {
     const token = req.headers?.authorization?.split(" ")[1];
     if (token && token != undefined) {
       const resp = await jwt.verify(token, SECRET_KEY);
+      console.log("#### resp #####", resp);
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ isVerified: true }),
+      };
+    }
+    return {
+        statusCode: 401,
+        body: JSON.stringify({ isVerified: false }),
+      };
+  } catch (error) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ isVerified: false, error:error?.message }),
+    };
+  }
+};
+
+const verifyAdmin = async (req) => {
+  try {
+    const token = req.headers?.authorization?.split(" ")[1];
+    if (token && token != undefined) {
+      const resp = await jwt.verify(token, ADMIN_SECRET_KEY);
       console.log("#### resp #####", resp);
 
       return {
@@ -67,5 +93,6 @@ module.exports = {
   getToken,
   verifyUser,
   send,
-  decodeToken
+  decodeToken,
+  verifyAdmin
 };
