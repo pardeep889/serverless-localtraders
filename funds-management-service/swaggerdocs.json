@@ -5,17 +5,29 @@
     },
     "servers": [
         {
+            "url" :" https://y13ltsm0w7.execute-api.us-east-1.amazonaws.com",
+            "description":"wallet"
+        },
+        {
+            "url":"https://q3j8v1plql.execute-api.us-east-1.amazonaws.com",
+            "description" :"vendor"
+        },
+        {
+            "url":"https://yjfcum4617.execute-api.us-east-1.amazonaws.com/dev",
+            "description":"notification "
+        },
+        {
             "url":"https://0mtdc4kfg5.execute-api.us-east-1.amazonaws.com",
-            "description":"trade baseurl"
+            "description":"trade "
         },
         {
             "url": "https://3p4sfu8qxh.execute-api.us-east-1.amazonaws.com",
-            "description": "admin baseurl"
+            "description": "admin "
 
         },
         {
             "url": "https://8gtef0v2qd.execute-api.us-east-1.amazonaws.com",
-            "description": "user baseurl"
+            "description": "user "
         }
     
     ],
@@ -31,7 +43,13 @@
             "name": "trade"
         },
         {
+            "name": "notification"
+        },
+        {
             "name": "vendor"
+        },
+        {
+            "name": "wallet"
         }
     ],
     "paths": {
@@ -619,8 +637,379 @@
                     }
                 }
             }
+        },
+        "/currencies": {
+            "get": {
+                "tags": [
+                    "trade"
+                ],
+                "description": "list of tokens",
+                "operationId": "listToken",
+                "requestBody": {},
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "Unable to retrieve currencies. something went wrong"
+                    }
+                }
+            }
+        },
+        "/send-sms": {
+            "post": {
+                "tags": [
+                    "notification"
+                ],
+                "description": "send sms to the user",
+                "operationId": "sendSMS",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Notification"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "text has been sent"
+                    },
+                    "400": {
+                        "description": "text failed to send"
+                    }
+                }
+            }
+        },
+        "/verify-sms": {
+            "post": {
+                "tags": [
+                    "notification"
+                ],
+                "description": "verify the sms",
+                "operationId": "verifySMS",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyOTP"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "phone number is verified"
+                    },
+                    "400": {
+                        "description": "either email or code is not matched"
+                    }
+                }
+            }
+        },
+        "/vendor": {
+            "post": {
+                "tags": [
+                    "vendor"
+                ],
+                "description": "register vendor",
+                "operationId": "createVendor",
+                "requestBody": {
+                    "description": "Created vendor object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Vendor"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Vendor"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/vendor/login": {
+            "post": {
+                "tags": [
+                    "vendor"
+                ],
+                "description": "Logs vendor into the system",
+                "operationId": "loginVendor",
+                "parameters": [],
+                "requestBody": {
+                    "description": "login vendor object",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserLogin"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json":{}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid email/password supplied"
+                    },
+                    "404" :{
+                        "description":"email not found"
+                    }
+                }
+            }
+        },
+        "/vendor/email/verify/{token}": {
+            "get": {
+                "tags": [
+                    "vendor"
+                ],
+                "description": "Verify vendor email with token which is send to your email",
+                "operationId": "verifyVendorEmail",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "description": "extract the token from the link which is send to your email this token is valid for 5 min.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid token"
+                    },
+                    "404": {
+                        "description": "something went wrong"
+                    }
+                }
+            }
+        },
+        "/vendor/forgot-password/{email}": {
+            "post": {
+                "tags": [
+                    "vendor"
+                ],
+                "description": "send the reset-password link to the vendor email.",
+                "operationId": "vendor1-reset-password",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "reset-password link sent successfully"
+                    },
+                    "400": {
+                        "description": "reset-password link not sent"
+                    },
+                    "404": {
+                        "description": "User with this email not exists"
+                    }
+                }
+            }
+        },
+        "/vendor/reset-password-new/{token}": {
+            "post": {
+                "tags": [
+                    "vendor"
+                ],
+                "description": "send the reset-password link to the vendor email.",
+                "operationId": "venddor-reset-password-confirm",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "new password",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                          
+                                    "newPassword": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "reset-password  successfully"
+                    },
+                    "400": {
+                        "description": "Unable to reset password. something went wrong"
+                    },
+                    "404": {
+                        "description": "User with this email not exists"
+                    }
+                }
+            }
+        },
+        "/vendor/change-password": {
+            "post": {
+                "tags": [
+                    "vendor"
+                ],
+                "description": "send the reset-password link to the vendor email.",
+                "operationId": "vendor-change-password",
+                "requestBody": {
+                    "description": "change password , old password should be matched",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/changePassword"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password changed successfully"
+                    },
+                    "400": {
+                        "description": "Unable to change password. something went wrong"
+                    },
+                    "404": {
+                        "description": "User with this email not exists"
+                    }
+                }
+            }
+        },
+        "/vendors": {
+            "get": {
+                "tags": [
+                    "vendor"
+                ],
+                "description": "List all service provider only for admin",
+                "operationId": "listServiceProvider",
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "something went wrong"
+                    }
+                },
+                "security": [
+                    {
+                        "adminToken": []
+                    }
+                  ]
+            }
+        },
+        "/wallet": {
+            "post": {
+                "tags": [
+                    "wallet"
+                ],
+                "description": "create wallet for user",
+                "operationId": "createWallet",
+                "parameters": [],
+                "requestBody": {
+                    "description": "enter userId here which you got from list-user.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                          
+                                    "userId": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "required":true
+                            }
+                        }
+                    }
+                    },
+                
+                "responses": {
+                    "200": {
+                        "description": "wallet created successfully"
+                    },
+                    "400": {
+                        "description": "missing userId from the body"
+                    },
+                    "500" :{
+                        "description":"internal server error"
+                    }
+                }
+            }
+        },
+        "/wallets/list/{userId}": {
+            "get": {
+                "tags": [
+                    "wallet"
+                ],
+                "description": "get the wallet detail for the userId",
+                "operationId": "get-wallet-details",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "The path parameter userId is required."
+                    },
+                    "404": {
+                        "description": "error occured while fetching the wallet table."
+                    }
+                }
+            }
         }
     },
+    
     "components": {
         "schemas": {
             "User": {
@@ -771,6 +1160,78 @@
                     "type",
                     "location",
                     "avgTime"
+                  ]
+            },
+            "Notification":{
+                "type": "object",
+                "properties": {
+                    "phoneNumber": {
+                        "type": "string",
+                        "example": "xxxxx-xxxxx"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "your@email.com",
+                        "description":"you should register first"
+
+                    }
+                },
+                "required": [
+                    "phoneNumber",
+                    "email"
+                  ]
+            },
+            "VerifyOTP":{
+                "type": "object",
+                "properties": {
+                    "phoneNumber": {
+                        "type": "string",
+                        "example": "xxxxx-xxxxx"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "your@email.com",
+                        "description":"you should register first"
+
+                    },
+                    "code": {
+                        "type": "integer",
+                        "format": "int64"
+
+                    }
+                },
+                "required": [
+                    "phoneNumber",
+                    "email",
+                    "code"
+                  ]
+            },
+            "Vendor": {
+                "type": "object",
+                "properties": {
+
+                    "firstName": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "James"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "john@email.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "12345"
+                    }
+                },
+                "required": [
+                    "password",
+                    "email",
+                    "firstName",
+                    "lastName"
                   ]
             }
         },
