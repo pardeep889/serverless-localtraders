@@ -5,6 +5,10 @@
     },
     "servers": [
         {
+            "url":"https://8vhkfqahgf.execute-api.us-east-1.amazonaws.com",
+            "description":"asset"
+        },
+        {
             "url" :" https://y13ltsm0w7.execute-api.us-east-1.amazonaws.com",
             "description":"wallet"
         },
@@ -50,6 +54,9 @@
         },
         {
             "name": "wallet"
+        },
+        {
+            "name":"asset"
         }
     ],
     "paths": {
@@ -1007,6 +1014,68 @@
                     }
                 }
             }
+        },
+        "/asset": {
+            "post": {
+                "tags": [
+                    "asset"
+                ],
+                "description": "register asset",
+                "operationId": "createAsset",
+                "requestBody": {
+                    "description": "Created asset object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Asset"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Asset"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/list/{userId}": {
+            "get": {
+                "tags": [
+                    "asset"
+                ],
+                "description": "get all the assets for the userId",
+                "operationId": "get-user-assets",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "The path parameter userId is required."
+                    },
+                    "404": {
+                        "description": "error occured while fetching the assets table."
+                    }
+                }
+            }
         }
     },
     
@@ -1232,6 +1301,38 @@
                     "email",
                     "firstName",
                     "lastName"
+                  ]
+            },
+            "Asset": {
+                "type": "object",
+                "properties": {
+
+                    "userId": {
+                        "type": "string",
+                        "example": "asdfjk212"
+                    },
+                    "balance": {
+                        "type": "string",
+                        "example": "20"
+                    },
+                    "assetName": {
+                        "type": "string",
+                        "example": "Tether"
+                    },
+                    "symbol": {
+                        "type": "string",
+                        "example": "tet"
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "0x15645"
+                    }
+                },
+                "required": [
+                    "userId",
+                    "balance",
+                    "assetName",
+                    "symbol"
                   ]
             }
         },
