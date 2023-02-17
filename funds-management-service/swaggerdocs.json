@@ -5,25 +5,33 @@
     },
     "servers": [
         {
-            "url": "https://8gtef0v2qd.execute-api.us-east-1.amazonaws.com"
+            "url":"https://0mtdc4kfg5.execute-api.us-east-1.amazonaws.com",
+            "description":"trade baseurl"
         },
         {
-            "url": "https://3p4sfu8qxh.execute-api.us-east-1.amazonaws.com"
+            "url": "https://3p4sfu8qxh.execute-api.us-east-1.amazonaws.com",
+            "description": "admin baseurl"
+
+        },
+        {
+            "url": "https://8gtef0v2qd.execute-api.us-east-1.amazonaws.com",
+            "description": "user baseurl"
         }
+    
     ],
     "tags": [
  
         {
-            "name": "user",
-            "description": "Everything about user"
+            "name": "user"
         },
         {
-            "name": "admin",
-            "description": "Everything about admin"
+            "name": "admin"
         },
         {
-            "name": "vendor",
-            "description": "Everything about vendor"
+            "name": "trade"
+        },
+        {
+            "name": "vendor"
         }
     ],
     "paths": {
@@ -263,6 +271,123 @@
                 }
             }
         },
+        "/admin": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "register admin",
+                "operationId": "createAdmin",
+                "requestBody": {
+                    "description": "Create admin object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json":{}
+                        }
+                    },
+                    "400": {
+                        "description": "User with this email already exists"
+                    },
+                    "404" :{
+                        "description":"something went wrong"
+                    }
+                }
+            }
+        },
+        "/admin/login": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "Logs user into the system",
+                "operationId": "loginUser",
+                "parameters": [],
+                "requestBody": {
+                    "description": "login user object",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserLogin"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json":{}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid email/password supplied"
+                    },
+                    "404" :{
+                        "description":"email not found"
+                    }
+                }
+            }
+        },
+        "/admin/payment-category": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "add payment category",
+                "operationId": "addPaymentCategory",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PaymentCategory"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+        
+                    "200": {
+                        "description": "Payment method added successfully"
+                    },
+                    "400": {
+                        "description": "something went wrong"
+                    }
+                },
+                "security": [
+                    {
+                        "adminToken": []
+                    }
+                  ]
+            },
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "List all service provider",
+                "operationId": "listPaymentMethods",
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "something went wrong"
+                    }
+                }
+            }
+        },
         "/admin/service-provider": {
             "post": {
                 "tags": [
@@ -297,12 +422,204 @@
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "adminToken": []
+                    }
+                  ]
+            },
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "List all service provider",
+                "operationId": "listServiceProvider",
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "something went wrong"
+                    }
+                }
+            }
+        },
+       
+        "/admin/list-users": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "list of users",
+                "operationId": "listOfUsers",
+                "requestBody": {},
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "Unable to get users. something went wrong"
+                    },
+                    "401" :{
+                        "description":"access forbidden"
+                    }
+                }
+            }
+        },
+        "/admin/trade": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "create trade",
+                "operationId": "createTrade",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Trade"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+        
+                    "200": {
+                        "description": "Trade added successfully"
+                    },
+                    "400": {
+                        "description": "something went wrong"
+                    },
+                    "401" :{
+                        "description":"access forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "adminToken": []
                     }
                   ]
             }
+        },
+         "/alltrade": {
+            "get": {
+                "tags": [
+                    "trade"
+                ],
+                "description": "list all trades",
+                "operationId": "listOfUsers",
+                "requestBody": {},
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "Unable to get trades. something went wrong"
+                    }
+                }
+            }
+        },
+        "/trade/{id}": {
+            "get": {
+                "tags": [
+                    "trade"
+                ],
+                "description": "get single trade",
+                "operationId": "getTrade",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "request successful"
+                    },
+                    "400": {
+                        "description": "Unable to retrieve trade/Missing id path param"
+                    },
+                    "404": {
+                        "description": "something went wrong"
+                    }
+                }
+            }
+        },
+        "/trade": {
+            "get": {
+                "tags": [
+                    "trade"
+                ],
+                "description": "list all trades with query params",
+                "operationId": "listTade",
+                "requestBody": {},
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "default": "sell",
+                            "enum": [
+                                "sell",
+                                "buy"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "paymentMethodCategory",
+                        "in": "query",
+                        "required":false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "location",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "paymentMethod",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "currency",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "priceRange",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "Unable to get trades. something went wrong"
+                    }
+                }
+            }
         }
-
     },
     "components": {
         "schemas": {
@@ -390,6 +707,71 @@
                     "category",
                     "icon"
                   ]
+            },
+            "PaymentCategory":{
+                "type": "object",
+                "properties": {
+                    "category": {
+                        "type": "string",
+                        "example": "online payment"
+                    },
+                    "icon": {
+                        "type": "string",
+                        "example": "https://cdn-icons-png.flaticon.com/512/1332/1332708.png"
+                    }
+                },
+                "required": [
+                    "category",
+                    "icon"
+                  ]
+            },
+            "Trade":{
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "example": "ragnar"
+                    },
+                    "paymentMethodCategory": {
+                        "type": "string",
+                        "example": "online payment"
+                    },
+                    "price": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 0.0
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "btc"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "sell",
+                        "enum": [
+                            "sell",
+                            "buy"
+                        ]
+                    },
+                    "location": {
+                        "type": "string",
+                        "example": "india"
+                    },
+                    "avgTime":{
+                        "type": "string",
+                        "example": "date-time"
+                    }
+                },
+                "required": [
+                    "username",
+                    "paymentMethodCategory",
+                    "paymentMethod",
+                    "price",
+                    "currency",
+                    "type",
+                    "location",
+                    "avgTime"
+                  ]
             }
         },
         "requestBodies": {
@@ -413,7 +795,12 @@
                 "name": "api_key",
                 "in": "header"
             },
-              "bearerAuth": {
+              "adminToken": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+              },
+              "userToken": {
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT"
