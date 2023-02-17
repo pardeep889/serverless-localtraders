@@ -18,7 +18,8 @@ provider:
           Resource:
             - Fn::GetAtt: [AssetTable, Arn]
             - arn:aws:dynamodb:us-east-1:945677977841:table/Wallet
-
+  httpApi:
+    cors: true
 
 functions:
   create-asset:
