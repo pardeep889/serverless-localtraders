@@ -7,7 +7,27 @@ const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = async (req) => {
   try {
+
+    if (!req.body) {
+      return utils.send(400, {
+        message: "Missing password and email",
+      });
+    }
+
     let { email, password } = JSON.parse(req.body);
+
+    if (!email) {
+      return utils.send(422, {
+        message: "Missing email",
+      });
+    }
+
+    if (!password) {
+      return utils.send(422, {
+        message: "Missing Password",
+      });
+    }
+
     const params = {
       TableName: "AdminUser",
       FilterExpression: "email = :email",
@@ -18,18 +38,18 @@ module.exports.handler = async (req) => {
    
     const data = await dynamoDbClient.scan(params).promise();
     if (data.Items.length != 1) {
-      return utils.send(400, {
+      return utils.send(404, {
         data: {
           isAuth: false,
           message: "Auth Failed {Email not Found}",
         },
       });
     }
-    if (data.Items) {
+ 
       const isMatch =
         CryptoJS.SHA256(password).toString() === data.Items[0].password.toString();
       if (!isMatch) {
-        return utils.send(400, {
+        return utils.send(401, {
           data: {
             isAuth: false,
             message: "Auth Failed {Wrong Password}",
@@ -45,19 +65,12 @@ module.exports.handler = async (req) => {
           user : {...resp,token}
         },
       });
-    }else{ 
-      return utils.send(400, {
-        data: {
-          isAuth: false,
-          user : 'Username or password is wrong'
-        },
-      });
-    }
+    
   } catch (error) {
-    return utils.send(400, {
+    return utils.send(500, {
       isAuth: false,
-      message: "something went wrong.",
-      error: "For development check cloudwatch logs"
+      message: "Internal Server Error",
+      error : error + ""
     });
   }
 };

@@ -6,18 +6,33 @@ const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = async (event) => {
   try {
-    const user = JSON.parse(event.body);
+    if (!event.body) {
+      return utils.send(400, {
+        message: "request body is missing!",
+      });
+    }
+
+    let user;
+    try {
+      user = JSON.parse(event.body);
+    } catch (err) {
+      return utils.send(400, {
+        message: 'request body  is not a valid JSON',
+      });
+        }
+
+        if (!user.email || !user.firstName|| !user.lastName || !user.password) {
+
+          return utils.send(422, {
+            message: 'missing email, firstName, lastName or password from the body',
+          });
+      }
     let { firstName, lastName, email, password, phone } = user;
 
     const id = Date.now() + Math.random().toString(36).substring(2, 15);
     const hashedPassword = CryptoJS.SHA256(password).toString();
 
-    if (!user) {
-      return utils.send(400, {
-        message: event.body,
-        data: {},
-      });
-    }
+ 
     const USER = {
       uid: id,
       firstname: firstName,
@@ -38,7 +53,7 @@ module.exports.handler = async (event) => {
 
     const data = await dynamoDbClient.scan(paramsScan).promise();
     if (data.Items.length > 0) {
-      return utils.send(400, {
+      return utils.send(409, {
         data: {
           message: "User with this email already exists",
         },
@@ -61,9 +76,9 @@ module.exports.handler = async (event) => {
     });
   } catch (error) {
  
-    return utils.send(400, {
+    return utils.send(500, {
       message: "something went wrong",
-      data: {},
+      error : error + ""
     });
   }
 };
