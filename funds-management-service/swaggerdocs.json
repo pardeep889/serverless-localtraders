@@ -37,6 +37,7 @@
                 "operationId": "createUser",
                 "requestBody": {
                     "description": "Created user object",
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
@@ -261,6 +262,45 @@
                     }
                 }
             }
+        },
+        "/admin/service-provider": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "add service provider to payment category",
+                "operationId": "addServiceProvider",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ServiceProvider"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+        
+                    "200": {
+                        "description": "PaymentService Provider method added successfully"
+                    },
+                    "400": {
+                        "description": "something went wrong"
+                    },
+                    "404" :{
+                        "description":"email not found"
+                    },
+                    "401" :{
+                        "description":"access forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                  ]
+            }
         }
 
     },
@@ -287,9 +327,10 @@
                         "example": "12345"
                     }
                 },
-                "xml": {
-                    "name": "user"
-                }
+                "required": [
+                    "password",
+                    "email"
+                  ]
             },
             "UserLogin": {
                 "type": "object",
@@ -322,6 +363,33 @@
                         "example": "123456"
                     }
                 }
+            },
+            "ServiceProvider":{
+                "type": "object",
+                "properties": {
+
+                    "providerName": {
+                        "type": "string",
+                        "example": "paypal"
+                    },
+                    "category": {
+                        "type": "string",
+                        "example": "online payment"
+                    },
+                    "icon": {
+                        "type": "string",
+                        "example": "https://cdn-icons-png.flaticon.com/512/1332/1332708.png"
+                    },
+                    "symbol": {
+                        "type": "string",
+                        "example": ""
+                    }
+                },
+                "required": [
+                    "providerName",
+                    "category",
+                    "icon"
+                  ]
             }
         },
         "requestBodies": {
@@ -340,23 +408,16 @@
             }
         },
         "securitySchemes": {
-            "petstore_auth": {
-                "type": "oauth2",
-                "flows": {
-                    "implicit": {
-                        "authorizationUrl": "https://petstore3.swagger.io/oauth/authorize",
-                        "scopes": {
-                            "write:pets": "modify pets in your account",
-                            "read:pets": "read your pets"
-                        }
-                    }
-                }
-            },
             "api_key": {
                 "type": "apiKey",
                 "name": "api_key",
                 "in": "header"
-            }
+            },
+              "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+              }
         }
     }
 }
