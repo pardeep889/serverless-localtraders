@@ -65,6 +65,13 @@ functions:
           path: /swagger-docs
           method: get
 
+  swap:
+    handler: swap.handler
+    events:
+      - httpApi:
+          path: /swap
+          method: post
+
 resources:
   Resources:
     FundsTable:

@@ -99,8 +99,77 @@ async function createAssetsForUser(userId) {
   }
 }
 
+
+async function retrieveAssetBalance(id, symbol) {
+  // Code to retrieve sender's balance with symbol from database goes here
+  try {
+    const paramsScan = {
+      TableName: "Asset",
+      FilterExpression: "symbol = :symbol and userId = :userId",
+      ExpressionAttributeValues: {
+        ":symbol": symbol,
+        ":userId": id,
+      },
+    };
+
+    const data = await dynamoDbClient.scan(paramsScan).promise();
+    return data.Items[0];
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+// Update sender's balance in database
+async function updateBalance(assetId, updatedBalance) {
+  try {
+    const paramsUpdate = {
+      TableName: "Asset",
+      Key: { assetId: assetId },
+      UpdateExpression: "set #balance = :balance",
+      ExpressionAttributeValues: {
+        ":balance": updatedBalance,
+      },
+      ExpressionAttributeNames: {
+        "#balance": "balance",
+      },
+    };
+    await dynamoDbClient.update(paramsUpdate).promise();
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+async function createTransaction(from, to, amount, symbol, type) {
+  try {
+    const trxn_id =
+      "trxn-" + Date.now() + Math.random().toString(36).substring(2, 15);
+    const timestamp = "" + Date.now();
+
+    const trxnData = {
+      trxn_id,
+      to,
+      from,
+      type,
+      amount,
+      symbol,
+      timestamp,
+    };
+
+    const params = {
+      TableName: "Transaction",
+      Item: trxnData,
+    };
+
+    await dynamoDbClient.put(params).promise();
+  } catch (error) {
+    console.log({error})
+    throw new Error("something went wrong while creating the transaction");
+  }
+}
 module.exports = {
   send,
   initalizeWallet,
   createAssetsForUser,
+  retrieveAssetBalance,
+  updateBalance,
+  createTransaction
 };
