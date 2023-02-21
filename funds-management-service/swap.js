@@ -1,6 +1,6 @@
 const utils = require("./utils");
 const AWS = require("aws-sdk");
-const { verifyAdmin } = require("./token");
+const { verifyUser } = require("./token");
 const { default: axios } = require("axios");
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
@@ -46,47 +46,20 @@ const getSymbolsDetails = async (fromSymbol, toSymbol) => {
   return result;
 };
 
-const getUser = async (email) => {
-  const params = {
-    TableName: "User",
-    FilterExpression: "email = :email",
-    ExpressionAttributeValues: {
-      ":email": email,
-    },
-  };
-  const result = await dynamoDb.scan(params).promise();
-  return result.Items[0];
-};
 
-const checkIfAssetExitsForSymbol = async (symbol, userId) => {
-  console.log({ symbol, userId });
-  // check if user exist in our db
-  const paramsScan = {
-    TableName: "Asset",
-    FilterExpression: "symbol = :symbol and userId = :userId",
-    ExpressionAttributeValues: {
-      ":symbol": symbol,
-      ":userId": userId,
-    },
-  };
-
-  const data = await dynamoDb.scan(paramsScan).promise();
-  console.log({ data });
-  return data.Items[0];
-};
 
 module.exports.handler = async (request) => {
   try {
-    // const isVerified = await verifyAdmin(request);
-    // if (isVerified.statusCode === 401) {
-    //   return {
-    //     statusCode: 401,
-    //     body: JSON.stringify({
-    //       isVerified: false,
-    //       error: "Access Forbidden",
-    //     }),
-    //   };
-    // }
+    const isVerified = await verifyUser(request);
+    if (isVerified.statusCode === 401) {
+      return {
+        statusCode: 401,
+        body: JSON.stringify({
+          isVerified: false,
+          error: "Access Forbidden",
+        }),
+      };
+    }
 
     if (!request.body) {
       return utils.send(400, {
@@ -111,26 +84,26 @@ module.exports.handler = async (request) => {
 
     let { toSymbol, amount, fromSymbol, userId } = body;
 
-    const fromAssetBalance = await utils.retrieveAssetBalance(
+    const fromSymbolResp = await utils.retrieveAssetBalance(
       userId,
       fromSymbol
     );
-    console.log("sender rr##### ", { fromAssetBalance });
+    console.log("sender rr##### ", { fromSymbolResp });
 
-    if (!fromAssetBalance) {
+    if (!fromSymbolResp) {
       return utils.send(400, {
         message: ` user doesn't exists or  doesn't have ${symbol} symbol`,
       });
     }
 
-    if (parseFloat(fromAssetBalance?.balance) < +amount) {
+    if (parseFloat(fromSymbolResp?.balance) < +amount) {
       return utils.send(400, {
         message: "user with this asset doesn't have sufficient balance to swap",
       });
     }
 
     const updated_balance_of_from_symbol =
-      parseFloat(fromAssetBalance?.balance) - amount;
+      parseFloat(fromSymbolResp?.balance) - amount;
     console.log({ updated_balance_of_from_symbol });
 
     // get latest token price
@@ -141,7 +114,6 @@ module.exports.handler = async (request) => {
 
     // get the balance of receipient for required symbol
     const toSymbolResp = await utils.retrieveAssetBalance(userId, toSymbol);
-    console.log("receipent rr##### ", { toSymbolResp });
 
     if (!toSymbolResp) {
       return utils.send(400, {
@@ -154,14 +126,18 @@ module.exports.handler = async (request) => {
     console.log({ updated_balance_of_to_symbol });
 
     // update balance for sender and receiver
-    await utils.updateBalance(fromAssetBalance.assetId, updated_balance_of_from_symbol);
+    await utils.updateBalance(fromSymbolResp.assetId, updated_balance_of_from_symbol);
     await utils.updateBalance(
         toSymbolResp.assetId,
       updated_balance_of_to_symbol
     );
 
+    const symObject = {
+      from : fromSymbol,
+      to : toSymbol
+    }
     // create transactions
-    // await utils.createTransaction(userId, userId, amount, symbol, "swap");
+    await utils.createTransaction(userId, userId, amount, symObject, "swap");
 
     return utils.send(200, {
       message: "funds SWAP successfuly",
