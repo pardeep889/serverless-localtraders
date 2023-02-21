@@ -18,7 +18,10 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - Fn::GetAtt: [TradingTable, Arn]
-          
+
+  httpApi:
+    cors: true
+    
 Type: AWS::Logs::LogGroup
 Properties:
   DataProtectionPolicy: Json
@@ -70,6 +73,12 @@ functions:
             path: /currencies
             method: get
 
+  market-cap-lct:
+      handler: market-cap-lct.handler
+      events:
+        - httpApi:
+            path: /market-cap/lct
+            method: get
 resources:
   Resources:
     TradingTable:
