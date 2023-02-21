@@ -45,6 +45,8 @@ module.exports.handler = async (event) => {
     }
 
     const id = Date.now() + Math.random().toString(36).substring(2, 15);
+    const createdAt = Date.now();
+
     const assetData = {
       assetId: id,
       userId,
@@ -53,6 +55,8 @@ module.exports.handler = async (event) => {
       address,
       symbol: symbol_lowerCase,
       logoUrl,
+      createdAt,
+      updatedAt:createdAt
     };
 
     const params = {

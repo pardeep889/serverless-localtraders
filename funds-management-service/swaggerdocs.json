@@ -32,6 +32,10 @@
         {
             "url": "https://8gtef0v2qd.execute-api.us-east-1.amazonaws.com",
             "description": "user "
+        },
+        {
+            "url": " https://53nsznx3bl.execute-api.us-east-1.amazonaws.com",
+            "description": "funds "
         }
     
     ],
@@ -392,7 +396,7 @@
                 },
                 "security": [
                     {
-                        "adminToken": []
+                        "userToken": []
                     }
                   ]
             },
@@ -660,6 +664,25 @@
                     },
                     "400": {
                         "description": "Unable to retrieve currencies. something went wrong"
+                    }
+                }
+            }
+        },
+        "/market-cap/lct": {
+            "get": {
+                "tags": [
+                    "trade"
+                ],
+                "description": "market cap for lct token",
+                "operationId": "market-cap-lct",
+                "requestBody": {},
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "Unable to retrieve market cap for lct. something went wrong"
                     }
                 }
             }
@@ -1076,6 +1099,41 @@
                     }
                 }
             }
+        },
+        "/swap": {
+            "post": {
+                "tags": [
+                    "funds"
+                ],
+                "description": "swap funds",
+                "operationId": "swap-funds",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Swap"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "funds SWAP successfuly"
+                    },
+                    "400": {
+                        "description": "Unable to SWAP funds"
+                    },
+                    "401": {
+                        "description": "Access Forbidden/ JWT expired"
+                    }
+                },
+                "security": [
+                    {
+                        "userToken": []
+                    }
+                  ]
+            }
         }
     },
     
@@ -1333,6 +1391,34 @@
                     "balance",
                     "assetName",
                     "symbol"
+                  ]
+            },
+            "Swap": {
+                "type": "object",
+                "properties": {
+
+                    "userId": {
+                        "type": "string",
+                        "example": "asdfjk212"
+                    },
+                    "fromSymbol": {
+                        "type": "string",
+                        "example": "eth"
+                    },
+                    "toSymbol": {
+                        "type": "string",
+                        "example": "bnb"
+                    },
+                    "amount": {
+                        "type": "string",
+                        "example": "0.01"
+                    }
+                },
+                "required": [
+                    "userId",
+                    "fromSymbol",
+                    "toSymbol",
+                    "amount"
                   ]
             }
         },
