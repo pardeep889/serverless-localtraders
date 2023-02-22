@@ -5,6 +5,10 @@
     },
     "servers": [
         {
+            "url":"https://45ay8f3brj.execute-api.us-east-1.amazonaws.com",
+            "description":"stake"
+        },
+        {
             "url":"https://8vhkfqahgf.execute-api.us-east-1.amazonaws.com",
             "description":"asset"
         },
@@ -1134,6 +1138,41 @@
                     }
                   ]
             }
+        },
+        "/stake": {
+            "post": {
+                "tags": [
+                    "stake"
+                ],
+                "description": "add amount to stake",
+                "operationId": "createStake",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Stake"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "stake added successfuly"
+                    },
+                    "400": {
+                        "description": "Unable to add stake"
+                    },
+                    "401": {
+                        "description": "Access Forbidden/ JWT expired"
+                    }
+                },
+                "security": [
+                    {
+                        "userToken": []
+                    }
+                  ]
+            }
         }
     },
     
@@ -1419,6 +1458,34 @@
                     "fromSymbol",
                     "toSymbol",
                     "amount"
+                  ]
+            },
+            "Stake": {
+                "type": "object",
+                "properties": {
+
+                    "userId": {
+                        "type": "string",
+                        "example": "uid1677061756233ppno7ytnvfq"
+                    },
+                    "symbol": {
+                        "type": "string",
+                        "example": "btc"
+                    },
+                    "stakeAmount": {
+                        "type": "string",
+                        "example": "1"
+                    },
+                    "timePeroidInMonths": {
+                        "type": "string",
+                        "example": "6"
+                    }
+                },
+                "required": [
+                    "userId",
+                    "symbol",
+                    "stakeAmount",
+                    "timePeroidInMonths"
                   ]
             }
         },
