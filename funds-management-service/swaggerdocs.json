@@ -304,6 +304,36 @@
                 }
             }
         },
+        "/contactus": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "send query to admin",
+                "operationId": "contactUs",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ContactUs"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "request successful",
+                        "content": {
+                            "application/json":{}
+                        }
+                    },
+                    "400" :{
+                        "description":"something went wrong"
+                    }
+                }
+            }
+        },
         "/admin": {
             "post": {
                 "tags": [
@@ -523,6 +553,58 @@
                     },
                     "400": {
                         "description": "something went wrong"
+                    },
+                    "401" :{
+                        "description":"access forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "adminToken": []
+                    }
+                  ]
+            }
+        },
+        "/admin/list-stakes": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "list of stakes",
+                "operationId": "listOfStakes",
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "Unable to get stakes. something went wrong"
+                    },
+                    "401" :{
+                        "description":"access forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "adminToken": []
+                    }
+                  ]
+            }
+        },
+        "/admin/list-queries": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "list of queries",
+                "operationId": "listOfQueries",
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "Unable to get queries. something went wrong"
                     },
                     "401" :{
                         "description":"access forbidden"
@@ -1181,22 +1263,15 @@
             "User": {
                 "type": "object",
                 "properties": {
-
-                    "firstName": {
-                        "type": "string",
-                        "example": "John"
-                    },
-                    "lastName": {
-                        "type": "string",
-                        "example": "James"
-                    },
                     "email": {
                         "type": "string",
                         "example": "john@email.com"
                     },
                     "password": {
                         "type": "string",
-                        "example": "12345"
+                        "example": "12345",
+                        "description":"password should contains uppercase , lowercase ,numerical and special character.And password length should be atleast 6 character long"
+                        
                     }
                 },
                 "required": [
@@ -1486,6 +1561,44 @@
                     "symbol",
                     "stakeAmount",
                     "timePeroidInMonths"
+                  ]
+            },
+            "ContactUs": {
+                "type": "object",
+                "properties": {
+
+                    "firstName": {
+                        "type": "string",
+                        "example": "XXX"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "XXX"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "abc@gmail.com"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "your message"
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "example": "In"
+                    },
+                    "phoneNumber": {
+                        "type": "string",
+                        "example": "xxxxx-xxxxx"
+                    }
+                },
+                "required": [
+                    "firstName",
+                    "lastName",
+                    "email",
+                    "message",
+                    "countryCode",
+                    "phoneNumber"
                   ]
             }
         },
