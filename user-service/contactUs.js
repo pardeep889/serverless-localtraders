@@ -71,20 +71,16 @@ module.exports.handler = async (event) => {
     console.log("#### email Response ####", emailResponse);
 
     return utils.send(200, {
-      data: {
-
         isEmailSend: emailResponse?.messageId ? true : false,
-      },
     });
   } catch (error) {
     if (error?.code === "MessageRejected") {
-      return utils.send(200, {
-        message: "vendor created successfully",
-        data: { ...vendor, isEmailSend: false, token },
+      return utils.send(400, {
+        message: "unable to send emails",
+        isEmailSend: false 
       });
     }
 
-    console.log("#### error ####", error);
     return utils.send(400, {
       message: "something went wrong",
       error: "" + error,
