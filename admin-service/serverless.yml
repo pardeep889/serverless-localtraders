@@ -25,7 +25,9 @@ provider:
 
             - arn:aws:dynamodb:us-east-1:945677977841:table/User
             - arn:aws:dynamodb:us-east-1:945677977841:table/trading-offer
+            - arn:aws:dynamodb:us-east-1:945677977841:table/Stakes
 
+            
   environment:
     USERS_TABLE: AdminUser
   httpApi:
@@ -125,6 +127,12 @@ functions:
           path: /admin/trade
           method: post
 
+  list-Stakes:
+    handler: list-stakes.handler
+    events:
+      - httpApi:
+          path: /admin/list-stakes
+          method: get
 resources:
   Resources:
     AdminTable:
