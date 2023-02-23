@@ -59,8 +59,12 @@ module.exports.handler = async (request) => {
     await utils.createStack(userId,symbol,stakeAmount,parseFloat(timePeroidInMonths))
 
     const updated_balance_of_asset =
-      parseFloat(assetResponse?.balance) - stakeAmount;
+      parseFloat(assetResponse?.balance) - (+stakeAmount);
     console.log({ updated_balance_of_asset });
+
+    // update balance of asset 
+
+    await utils.updateBalance(assetResponse.assetId, updated_balance_of_asset);
 
     // create transactions
     await utils.createTransaction(userId, userId, stakeAmount, symbol, "stake");

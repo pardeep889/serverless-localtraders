@@ -18,6 +18,7 @@ provider:
           Resource:
             - Fn::GetAtt: [StakeResource, Arn]
             - arn:aws:dynamodb:us-east-1:945677977841:table/Asset
+            - arn:aws:dynamodb:us-east-1:945677977841:table/Transaction
 
   httpApi:
     cors: true
