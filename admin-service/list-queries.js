@@ -19,7 +19,7 @@ module.exports.handler = async (request) => {
     }
 
     const params = {
-      TableName: "Stakes",
+      TableName: "ContactUs",
     };
 
     const data = await dynamoDb.scan(params).promise();
@@ -30,7 +30,7 @@ module.exports.handler = async (request) => {
     return utils.send(200, response);
   } catch (error) {
     return utils.send(400, {
-      message: "Unable to get list of Stakes. something went wrong",
+      message: "Unable to get list of queries. something went wrong",
       data: error,
     });
   }
