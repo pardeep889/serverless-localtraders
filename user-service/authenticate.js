@@ -4,28 +4,33 @@ const CryptoJS = require("crypto-js");
 const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 const { getToken } = require("./token");
 
-module.exports.handler = async (req) => {
+module.exports.handler = async (request) => {
+  if (!request.body) {
+    return utils.send(400, {
+      message: "request body is missing!",
+    });
+  }
+
+  let body;
   try {
-    if (!req.body) {
-      return utils.send(400, {
-        message: "Missing password and email",
-      });
-    }
+    body = JSON.parse(request.body);
+  } catch (err) {
+    return utils.send(400, {
+      message: "request body is not a valid JSON",
+    });
+  }
 
-    let { email, password } = JSON.parse(req.body);
+  try {
+    await utils.validateRequestBody(["email", "password"], body);
+  } catch (error) {
+    return utils.send(400, {
+      message: error.toString().slice(6).trim(),
+    });
+  }
 
-    if (!email) {
-      return utils.send(400, {
-        message: "Missing email",
-      });
-    }
 
-    if (!password) {
-      return utils.send(400, {
-        message: "Missing Password",
-      });
-    }
-
+  let { email, password } = body;
+  try {
     const params = {
       TableName: "User",
       FilterExpression: "email = :email",
@@ -37,10 +42,8 @@ module.exports.handler = async (req) => {
     const data = await dynamoDbClient.scan(params).promise();
     if (data.Items.length != 1) {
       return utils.send(404, {
-        data: {
           isAuth: false,
           message: "Auth Failed {Email not Found}",
-        },
       });
     }
     if (data.Items) {
@@ -49,34 +52,28 @@ module.exports.handler = async (req) => {
         data.Items[0].password.toString();
       if (!isMatch) {
         return utils.send(400, {
-          data: {
             isAuth: false,
             message: "Auth Failed {Wrong Password}",
-          },
         });
       }
       const token = await getToken(email, "1 days");
       const { password: pwd, passwordToken, ...resp } = data.Items[0];
 
       return utils.send(200, {
-        data: {
           isAuth: true,
-          user: { ...resp, token },
-        },
+          user: { ...resp, token }
       });
     } else {
       return utils.send(400, {
-        data: {
           isAuth: false,
           user: "Username or password is wrong",
-        },
       });
     }
   } catch (error) {
     return utils.send(400, {
       isAuth: false,
       message: "something went wrong.",
-      error: "For development check cloudwatch logs",
+      error: ""+error,
     });
   }
 };

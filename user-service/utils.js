@@ -4,7 +4,7 @@
 const AWS = require("aws-sdk");
 const nodemailer = require("nodemailer");
 const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
-const fs = require('fs');
+const fs = require("fs");
 // const getToken = async (user, expiry) => {
 //   return jwt.sign(user, SECRET_KEY, {
 //     expiresIn: expiry,
@@ -37,6 +37,46 @@ const assets = [
   { symbol: "busd", assetName: "Binance USD", balance: 0 },
 ];
 
+const firstNames = [
+  "Alice",
+  "Bob",
+  "Charlie",
+  "Dave",
+  "Eve",
+  "Frank",
+  "Grace",
+  "Heidi",
+  "Isaac",
+  "Jack",
+  "Kathy",
+  "Liam",
+  "Molly",
+  "Nate",
+  "Olivia",
+  "Peter",
+  "Quinn",
+  "Rachel",
+  "Sam",
+  "Tara",
+  "Ursula",
+  "Victoria",
+  "Wendy",
+  "Xander",
+  "Yara",
+  "Zack",
+];
+
+// Define a function to generate a random first name
+async function generateRandomName() {
+  const numDigits = 2;
+  let name = [];
+  for (let i = 0; i < numDigits; i++) {
+    const randomIndex = Math.floor(Math.random() * firstNames.length); // Choose a random index from the firstNames array
+    name.push(firstNames[randomIndex]); // Append the chosen first name to the name string
+  }
+  return name;
+}
+
 const sendVerifyEmail = async (to, subject, host) => {
   try {
     // configure AWS SDK
@@ -52,21 +92,19 @@ const sendVerifyEmail = async (to, subject, host) => {
       }),
     });
 
-    let hero = fs.readFileSync('./images/hero.png');
-    let app = fs.readFileSync('./images/app.png');
-    let circleM = fs.readFileSync('./images/circleM.png');
-    let coingecko = fs.readFileSync('./images/coingecko.png');
-    let google = fs.readFileSync('./images/google.png');
-    let heroSection = fs.readFileSync('./images/hero-section.png');
-    let intagram = fs.readFileSync('./images/intagram.png');
-    let linkedin = fs.readFileSync('./images/linkedin.png');
-    let logoTraders = fs.readFileSync('./images/logo-traders.png');
-    let medium = fs.readFileSync('./images/medium.png');
-    let telegram = fs.readFileSync('./images/telegram.png');
-    let twitter = fs.readFileSync('./images/twitter.png');
-    let youtube = fs.readFileSync('./images/youtube.png');
-
-
+    let hero = fs.readFileSync("./images/hero.png");
+    let app = fs.readFileSync("./images/app.png");
+    let circleM = fs.readFileSync("./images/circleM.png");
+    let coingecko = fs.readFileSync("./images/coingecko.png");
+    let google = fs.readFileSync("./images/google.png");
+    let heroSection = fs.readFileSync("./images/hero-section.png");
+    let intagram = fs.readFileSync("./images/intagram.png");
+    let linkedin = fs.readFileSync("./images/linkedin.png");
+    let logoTraders = fs.readFileSync("./images/logo-traders.png");
+    let medium = fs.readFileSync("./images/medium.png");
+    let telegram = fs.readFileSync("./images/telegram.png");
+    let twitter = fs.readFileSync("./images/twitter.png");
+    let youtube = fs.readFileSync("./images/youtube.png");
 
     // send some mail
     const result = await transporter.sendMail({
@@ -605,13 +643,8 @@ const sendVerifyEmail = async (to, subject, host) => {
   }
 };
 
-
-
-const sendEmail = async(to,subject,content) =>{
-
+const sendEmail = async (to, subject, content) => {
   try {
-    
- 
     // configure AWS SDK
     AWS.config.update({
       accessKeyId: "AKIA5YLWMZDY2UPJ4J7U",
@@ -630,21 +663,18 @@ const sendEmail = async(to,subject,content) =>{
       from: "verification@localtraders.finance",
       to: to,
       subject: subject,
-      html: content   });
+      html: content,
+    });
 
-    return result
+    return result;
   } catch (error) {
-    console.log("### email error ###",error)
-    return false
+    console.log("### email error ###", error);
+    return false;
   }
+};
 
-}
-
-const sendEmailToAdmin = async(from,content) =>{
-
+const sendEmailToAdmin = async (from, content) => {
   try {
-    
- 
     // configure AWS SDK
     AWS.config.update({
       accessKeyId: "AKIA5YLWMZDY2UPJ4J7U",
@@ -663,16 +693,15 @@ const sendEmailToAdmin = async(from,content) =>{
       from: from,
       to: "verification@localtraders.finance",
       subject: "Request for Information",
-      html: content   });
+      html: content,
+    });
 
-    return result
+    return result;
   } catch (error) {
-    console.log("### email error ###",error)
-    return false
+    console.log("### email error ###", error);
+    return false;
   }
-
-}
-
+};
 
 const thanksGivingEmailTemplate = `<!DOCTYPE html>
 <html>
@@ -1061,10 +1090,14 @@ const thanksGivingEmailTemplate = `<!DOCTYPE html>
 
 </html>`;
 
-
-const emailTemplateWithMessage = (firstName,lastName,email,phoneNumber,message) =>{
-
-  return`<!DOCTYPE html>
+const emailTemplateWithMessage = (
+  firstName,
+  lastName,
+  email,
+  phoneNumber,
+  message
+) => {
+  return `<!DOCTYPE html>
   <html>
   
   <head>
@@ -1449,8 +1482,8 @@ const emailTemplateWithMessage = (firstName,lastName,email,phoneNumber,message) 
       </table>
   </body>
   
-  </html>`
-}
+  </html>`;
+};
 const send = (statusCode, data) => {
   const responseHeaders = {
     "Content-Type": "application/json",
@@ -1466,6 +1499,47 @@ const send = (statusCode, data) => {
   };
 };
 
+async function validatePassword(password) {
+  const requiredChars = {
+    uppercase: /[A-Z]/,
+    lowercase: /[a-z]/,
+    specialChar: /[@$!%*?&]/,
+    numerical: /[0-9]/,
+  };
+
+  for (const [charType, regex] of Object.entries(requiredChars)) {
+    if (!regex.test(password)) {
+      throw new Error(
+        `Password must contain at least one ${charType} character.`
+      );
+    }
+  }
+
+  if (password.length < 6) {
+    throw new Error("Password must be at least 6 characters long.");
+  }
+
+  return true;
+}
+
+async function validateRequestBody(allowedFields, body) {
+  // Check if any fields other than the allowed fields are present
+
+  const extraFields = Object.keys(body).filter(
+    (field) => !allowedFields.includes(field)
+  );
+  if (extraFields.length > 0) {
+    throw new Error(`Only ${allowedFields.join(", ")} fields are allowed`);
+  }
+
+  // Check if all allowed fields are present
+  const missingFields = allowedFields.filter((field) => !body[field]);
+  if (missingFields.length > 0) {
+    throw new Error(
+      `${missingFields.join(", ")} are required field`
+    );
+  }
+}
 const initalizeWallet = async (userId) => {
   try {
     // check if this userId already have the wallet
@@ -1544,5 +1618,8 @@ module.exports = {
   sendVerifyEmail,
   thanksGivingEmailTemplate,
   emailTemplateWithMessage,
-  sendEmailToAdmin
+  sendEmailToAdmin,
+  validatePassword,
+  generateRandomName,
+  validateRequestBody,
 };
