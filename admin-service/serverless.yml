@@ -27,6 +27,8 @@ provider:
             - arn:aws:dynamodb:us-east-1:945677977841:table/trading-offer
             - arn:aws:dynamodb:us-east-1:945677977841:table/Stakes
             - arn:aws:dynamodb:us-east-1:945677977841:table/ContactUs
+            - arn:aws:dynamodb:us-east-1:945677977841:table/kyc
+
 
             
   environment:
@@ -141,6 +143,21 @@ functions:
       - httpApi:
           path: /admin/list-queries
           method: get
+
+  list-kyc-users:
+    handler: list-kyc-users.handler
+    events:
+      - httpApi:
+          path: /admin/list-kyc-users
+          method: get 
+
+  get-kyc-user:
+    handler: get-kyc-user.handler
+    events:
+      - httpApi:
+          path: /admin/get-kyc-user/{userId}
+          method: get 
+
 resources:
   Resources:
     AdminTable:
