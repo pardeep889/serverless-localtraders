@@ -5,6 +5,10 @@
     },
     "servers": [
         {
+            "url":"https://6o1mxixjta.execute-api.us-east-1.amazonaws.com",
+            "description":"kyc"
+        },
+        {
             "url":"https://45ay8f3brj.execute-api.us-east-1.amazonaws.com",
             "description":"stake"
         },
@@ -579,6 +583,68 @@
                     },
                     "400": {
                         "description": "Unable to get stakes. something went wrong"
+                    },
+                    "401" :{
+                        "description":"access forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "adminToken": []
+                    }
+                  ]
+            }
+        },
+        "/admin/list-kyc-users": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "list of kyc users",
+                "operationId": "listOfKycUsers",
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "Unable to get list of kyc users. something went wrong"
+                    },
+                    "401" :{
+                        "description":"access forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "adminToken": []
+                    }
+                  ]
+            }
+        },
+        "/admin/get-kyc-user/{userId}": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get kyc user",
+                "operationId": "getKycUser",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "Unable to get kyc detail of user. something went wrong"
                     },
                     "401" :{
                         "description":"access forbidden"
@@ -1255,6 +1321,79 @@
                     }
                   ]
             }
+        },
+        "/kyc": {
+            "post": {
+                "tags": [
+                    "kyc"
+                ],
+                "description": "create kyc request",
+                "operationId": "createKycUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Kyc"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "Unable to submit kyc request. something went wrong"
+                    },
+                    "401" :{
+                        "description":"access forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "userToken": []
+                    }
+                  ]
+            }
+        }
+        ,
+        "/kyc/{userId}": {
+            "get": {
+                "tags": [
+                    "kyc"
+                ],
+                "description": "get kyc user",
+                "operationId": "getKycUserId",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "Unable to get kyc detail of user. something went wrong"
+                    },
+                    "401" :{
+                        "description":"access forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "userToken": []
+                    }
+                  ]
+            }
         }
     },
     
@@ -1599,6 +1738,79 @@
                     "message",
                     "countryCode",
                     "phoneNumber"
+                  ]
+            },
+            "Kyc":{
+                "type": "object",
+                "properties": {
+                    "userId": {
+                        "type": "string",
+                        "example": "uid1677061756233ppno7ytnvfq"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "example": "ragnar"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "lothbroke"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "gurpreet.xpertiks@gmail.com"
+                    },
+                    "dob": {
+                        "type": "string",
+                        "example": "31/10/1997"
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "village xyz"
+                    },
+                    "pincode": {
+                        "type": "string",
+                        "example": "140140"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "rajpura"
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "panjab"
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "india"
+                    },
+                    "document_id": {
+                        "type": "string",
+                        "example": "xxxxx-xxxxx"
+                    },
+                    "document_name": {
+                        "type": "string",
+                        "example": "xxxxx-xxxxx"
+                    },
+                    "phoneNumber": {
+                        "type": "string",
+                        "example": "xxxxx-xxxxx"
+                    }
+                },
+                "required": [
+                    "userId",
+                    "firstName",
+                    "lastName",
+                    "email",
+                    "dob",
+                    "address",
+                    "pincode",
+                    "city",
+                    "state",
+                    "country",
+                    "document_id",
+                    "document_name",
+                    "phoneNumber"
+
                   ]
             }
         },
