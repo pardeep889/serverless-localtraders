@@ -1,0 +1,65 @@
+service: kyc-service
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - s3:PutObject # added S3 permissions
+          Resource:
+            - Fn::GetAtt: [KycResource, Arn]
+            - arn:aws:dynamodb:us-east-1:945677977841:table/Asset
+            - arn:aws:dynamodb:us-east-1:945677977841:table/Transaction
+            - arn:aws:s3:::kyc-bucket/* # added S3 resource
+
+  httpApi:
+    cors: true
+
+functions:
+  create-kyc:
+    handler: create.handler
+    events:
+      - httpApi:
+          path: /kyc
+          method: post
+
+  get-kyc:
+    handler: get.handler
+    events:
+      - httpApi:
+          path: /kyc/{userId}
+          method: get
+
+resources:
+  Resources:
+    KycResource:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: kyc
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
+
+    MyS3Bucket:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: kyc-bucket-0137
+
+plugins:
+  - serverless-offline
