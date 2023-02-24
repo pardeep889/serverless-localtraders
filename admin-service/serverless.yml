@@ -28,6 +28,7 @@ provider:
             - arn:aws:dynamodb:us-east-1:945677977841:table/Stakes
             - arn:aws:dynamodb:us-east-1:945677977841:table/ContactUs
             - arn:aws:dynamodb:us-east-1:945677977841:table/kyc
+            - arn:aws:dynamodb:us-east-1:945677977841:table/Transaction
 
 
             
@@ -158,6 +159,12 @@ functions:
           path: /admin/get-kyc-user/{userId}
           method: get 
 
+  get-transactions:
+    handler: transactions.handler
+    events:
+      - httpApi:
+          path: /admin/transactions
+          method: get 
 resources:
   Resources:
     AdminTable:
