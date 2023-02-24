@@ -32,16 +32,6 @@ async function createKyc(data) {
 
 
 module.exports.handler = async (request) => {
-    // const isVerified = await verifyUser(request);
-    // if (isVerified.statusCode === 401) {
-    //   return {
-    //     statusCode: 401,
-    //     body: JSON.stringify({
-    //       isVerified: false,
-    //       error: "Access Forbidden",
-    //     }),
-    //   };
-    // }
 
     if (!request.body) {
       return utils.send(400, {
@@ -70,7 +60,18 @@ module.exports.handler = async (request) => {
     }
 
     try {
-      let {userId,firstName,lastName,email,dob,addresss,pincode,city,state,country,phoneNumber,document_name,document_id } = body;
+      const isVerified = await verifyUser(request);
+      if (isVerified.statusCode === 401) {
+        return {
+          statusCode: 401,
+          body: JSON.stringify({
+            isVerified: false,
+            error: "Access Forbidden",
+          }),
+        };
+      }
+      
+      let {userId,firstName,lastName,email,dob,address,pincode,city,state,country,phoneNumber,document_name,document_id } = body;
   
       // first check if userId already exits
       const paramsScan = {
@@ -96,7 +97,7 @@ module.exports.handler = async (request) => {
       lastName,
       email,
       dob,
-      addresss,
+      address,
       pincode,
       city,
       state,
