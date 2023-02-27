@@ -29,6 +29,7 @@ provider:
             - arn:aws:dynamodb:us-east-1:945677977841:table/ContactUs
             - arn:aws:dynamodb:us-east-1:945677977841:table/kyc
             - arn:aws:dynamodb:us-east-1:945677977841:table/Transaction
+            - arn:aws:dynamodb:us-east-1:945677977841:table/Vendor
 
 
             
@@ -164,6 +165,13 @@ functions:
     events:
       - httpApi:
           path: /admin/transactions
+          method: get 
+
+  get-kpi:
+    handler: kpi.handler
+    events:
+      - httpApi:
+          path: /admin/kpi
           method: get 
 resources:
   Resources:
