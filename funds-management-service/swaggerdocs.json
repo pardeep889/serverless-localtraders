@@ -5,6 +5,10 @@
     },
     "servers": [
         {
+            "url":"https://a6a3jqs6pi.execute-api.us-east-1.amazonaws.com",
+            "description":"withdrawal"
+        },
+        {
             "url":"https://6o1mxixjta.execute-api.us-east-1.amazonaws.com",
             "description":"kyc"
         },
@@ -671,6 +675,65 @@
                     },
                     "400": {
                         "description": "Unable to get queries. something went wrong"
+                    },
+                    "401" :{
+                        "description":"access forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "adminToken": []
+                    }
+                  ]
+            }
+        },
+        "/admin/kpi": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get no. of user,traders,venders, kyc users",
+                "operationId": "kpi",
+                "parameters": [
+                    {
+                        "name": "kycStatus",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "default": "pending",
+                            "enum": [
+                                "pending",
+                                "success"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "userStatus",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tradeType",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "default": "sell",
+                            "enum": [
+                                "sell",
+                                "buy"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+        
+                    "200": {
+                        "description": "request successfull"
+                    },
+                    "400": {
+                        "description": "something went wrong"
                     },
                     "401" :{
                         "description":"access forbidden"
@@ -1394,6 +1457,44 @@
                     }
                   ]
             }
+        },
+        "/withdrawal": {
+            "post": {
+                "tags": [
+                    "withdrawal"
+                ],
+                "description": "withdrawal amount",
+                "operationId": "withdrawal",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WithDrawal"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "withdrawal successfuly"
+                    },
+                    "400": {
+                        "description": "something went wrong."
+                    },
+                    "404": {
+                        "description": "user not found with respective symbol"
+                    },
+                    "401": {
+                        "description": "Access Forbidden/ JWT expired"
+                    }
+                },
+                "security": [
+                    {
+                        "userToken": []
+                    }
+                  ]
+            }
         }
     },
     
@@ -1811,6 +1912,28 @@
                     "document_name",
                     "phoneNumber"
 
+                  ]
+            },
+            "WithDrawal": {
+                "type": "object",
+                "properties": {
+                    "userId": {
+                        "type": "string",
+                        "example": "uid1677061756233ppno7ytnvfq"
+                    },
+                    "amount": {
+                        "type": "string",
+                        "example": "1"
+                    },
+                    "symbolType": {
+                        "type": "string",
+                        "example": "btc"
+                    }
+                },
+                "required": [
+                    "userId",
+                    "amount",
+                    "symbolType"
                   ]
             }
         },
