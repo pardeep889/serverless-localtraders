@@ -66,10 +66,10 @@ module.exports.handler = async (request) => {
       });
     }
 
-    if (!body.fromSymbol || !body.toSymbol || !body.amount || !body.userId || !body.tokenAmount || !body.txnId
+    if (!body.fromSymbol || !body.toSymbol || !body.amount || !body.userId || !body.tokenAmount || !body.txnId || !body.status
       ) {
       return utils.send(400, {
-        message: "missing fromSymbol, userId,toSymbol or amount the body",
+        message: "missing fromSymbol, userId,toSymbol, status or amount the body",
       });
     }
 

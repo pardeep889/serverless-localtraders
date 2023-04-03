@@ -19,13 +19,13 @@ module.exports.handler = async (request) => {
       });
     }
 
-    if (!body.stakeAmount || !body.userId || !body.unlockedDate || !body.txnId || !body.tokenAmount) {
+    if (!body.stakeAmount || !body.userId || !body.unlockedDate || !body.txnId || !body.tokenAmount || !body.status) {
       return utils.send(400, {
-        message: "missing stakeAmount, userId, unlockedDate ,  tokenAmountor txnId the body",
+        message: "missing stakeAmount, userId, unlockedDate , status, tokenAmountor txnId the body",
       });
     }
 
-    let { unlockedDate, stakeAmount, userId ,tokenAmount , txnId} = body;
+    let { unlockedDate, stakeAmount, userId ,tokenAmount , txnId, status} = body;
 
     const symObject = {
       tokenAmount: tokenAmount,
@@ -62,7 +62,7 @@ module.exports.handler = async (request) => {
     // await utils.updateBalance(assetResponse.assetId, updated_balance_of_asset);
 
     // create transactions
-    await utils.createTransaction(userId, userId, stakeAmount, symObject, "stake");
+    await utils.createTransaction(userId, userId, stakeAmount, symObject, "stake", status);
 
     return utils.send(200, {
       message: "balance added in stack successfuly",
