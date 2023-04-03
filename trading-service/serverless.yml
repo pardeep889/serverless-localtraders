@@ -68,11 +68,29 @@ functions:
   
   currency :
       handler: getCurrency.handler
+      memorySize: 840
+      timeout: 15
       events:
         - httpApi:
             path: /currencies
             method: get
 
+  currency-data :
+      handler: updateCurrenciesdata.handler
+      memorySize: 840
+      timeout: 15
+      events:
+        - httpApi:
+            path: /updateCurrenciesdata
+            method: get
+  marketplace:
+      handler: marketplace.handler
+      memorySize: 840
+      timeout: 15
+      events:
+        - httpApi:
+            path: /marketplace
+            method: get
   market-cap-lct:
       handler: market-cap-lct.handler
       events:

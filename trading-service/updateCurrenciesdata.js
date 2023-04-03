@@ -1,25 +1,26 @@
 const utils = require("./utils");
 const AWS = require("aws-sdk");
 const { default: axios } = require("axios");
-const dataCOIN  = require("./templatedata");
+const fs = require("fs");
+
 
 module.exports.handler = async (request) => {
   try {
-    // const URL =
-    //   "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=true&price_change_percentage=7d";
-    // const currencies = await axios.get(URL);
+    const URL =
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=true&price_change_percentage=7d";
+    const currencies = await axios.get(URL);
     const targetSymbols = new Set(
       ["bnb", "btc", "eth", "usdt", "usdc", "busd"].map((val) =>
         val.toLowerCase()
       )
     );
-    // const result = currencies?.data?.reduce((filtered, filterValue) => {
-    //   const { symbol } = filterValue;
-    //   if (targetSymbols.has(symbol.toLowerCase())) {
-    //     filtered.push(filterValue);
-    //   }
-    //   return filtered;
-    // }, []);
+    const result = currencies?.data?.reduce((filtered, filterValue) => {
+      const { symbol } = filterValue;
+      if (targetSymbols.has(symbol.toLowerCase())) {
+        filtered.push(filterValue);
+      }
+      return filtered;
+    }, []);
 
     const LCDTURL = "https://widget.nomics.com/api/assets/LCT3/BUSD/";
     const lcdResponse = await axios.post(LCDTURL);
@@ -56,18 +57,14 @@ module.exports.handler = async (request) => {
         price: newResp?.history,
       },
     };
-    const result = dataCOIN.reduce((filtered, filterValue) => {
-      const { symbol } = filterValue;
-      if (targetSymbols.has(symbol.toLowerCase())) {
-        filtered.push(filterValue);
-      }
-      return filtered;
-    }, []);
+    const data = [...result, restructureResp];
+    fs.writeFileSync('file.json', JSON.stringify(data));
 
     return utils.send(200, {
       message: "currencies retrieved successfully",
-      data: [...result, restructureResp]
+      data,
     });
+
   } catch (error) {
     console.log("pardeep", error);
     return utils.send(400, {
