@@ -138,7 +138,7 @@ async function updateBalance(assetId, updatedBalance) {
     throw new Error(error);
   }
 }
-async function createTransaction(from, to, amount, symbol, type) {
+async function createTransaction(from, to, amount, symbol, type, status="pending") {
   try {
     const trxn_id =
       "txn-" + Date.now() + Math.random().toString(36).substring(2, 15);
@@ -152,6 +152,7 @@ async function createTransaction(from, to, amount, symbol, type) {
       amount,
       symbol,
       timestamp,
+      status
     };
 
     const params = {

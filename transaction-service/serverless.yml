@@ -47,6 +47,20 @@ functions:
       - httpApi:
           path: /trxn/{id}
           method: get
+
+  fetchTxnByType: 
+    handler: fetchTxnByType.handler
+    events:
+      - httpApi:
+          path: /txnByType
+          method: post
+
+  fetchSignature:
+    handler: fetchSignature.handler
+    events:
+      - httpApi: 
+          path: /fetch-signature
+          method: get
           
   get-user-trxn:
     handler: get-user-trxns.handler

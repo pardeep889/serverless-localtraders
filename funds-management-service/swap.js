@@ -50,16 +50,6 @@ const getSymbolsDetails = async (fromSymbol, toSymbol) => {
 
 module.exports.handler = async (request) => {
   try {
-    const isVerified = await verifyUser(request);
-    if (isVerified.statusCode === 401) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({
-          isVerified: false,
-          error: "Access Forbidden",
-        }),
-      };
-    }
 
     if (!request.body) {
       return utils.send(400, {
@@ -76,68 +66,71 @@ module.exports.handler = async (request) => {
       });
     }
 
-    if (!body.fromSymbol || !body.toSymbol || !body.amount || !body.userId) {
+    if (!body.fromSymbol || !body.toSymbol || !body.amount || !body.userId || !body.tokenAmount || !body.txnId
+      ) {
       return utils.send(400, {
         message: "missing fromSymbol, userId,toSymbol or amount the body",
       });
     }
 
-    let { toSymbol, amount, fromSymbol, userId } = body;
+    let { toSymbol, amount, fromSymbol, userId , tokenAmount, txnId , status} = body;
 
-    const fromSymbolResp = await utils.retrieveAssetBalance(
-      userId,
-      fromSymbol
-    );
-    console.log("sender rr##### ", { fromSymbolResp });
+    // const fromSymbolResp = await utils.retrieveAssetBalance(
+    //   userId,
+    //   fromSymbol
+    // );
+    // console.log("sender rr##### ", { fromSymbolResp });
 
-    if (!fromSymbolResp) {
-      return utils.send(400, {
-        message: ` user doesn't exists or  doesn't have ${symbol} symbol`,
-      });
-    }
+    // if (!fromSymbolResp) {
+    //   return utils.send(400, {
+    //     message: ` user doesn't exists or  doesn't have ${fromSymbolResp} symbol`,
+    //   });
+    // }
 
-    if (parseFloat(fromSymbolResp?.balance) < +amount) {
-      return utils.send(400, {
-        message: "user with this asset doesn't have sufficient balance to swap",
-      });
-    }
+    // if (parseFloat(fromSymbolResp?.balance) < +amount) {
+    //   return utils.send(400, {
+    //     message: "user with this asset doesn't have sufficient balance to swap",
+    //   });
+    // }
 
-    const updated_balance_of_from_symbol =
-      parseFloat(fromSymbolResp?.balance) - amount;
-    console.log({ updated_balance_of_from_symbol });
+    // const updated_balance_of_from_symbol =
+    //   parseFloat(fromSymbolResp?.balance) - amount;
+    // console.log({ updated_balance_of_from_symbol });
 
-    // get latest token price
-    const resp = await convertToUsd(fromSymbol, toSymbol);
-    const amountToBeAddedInToSymbol = +resp * +amount;
-    // const resp = await getSymbolsDetails(fromSymbol,toSymbol,amount)
-    console.log(amountToBeAddedInToSymbol);
+    // // get latest token price
+    // const resp = await convertToUsd(fromSymbol, toSymbol);
+    // const amountToBeAddedInToSymbol = +resp * +amount;
+    // // const resp = await getSymbolsDetails(fromSymbol,toSymbol,amount)
+    // console.log(amountToBeAddedInToSymbol);
 
-    // get the balance of receipient for required symbol
-    const toSymbolResp = await utils.retrieveAssetBalance(userId, toSymbol);
+    // // get the balance of receipient for required symbol
+    // const toSymbolResp = await utils.retrieveAssetBalance(userId, toSymbol);
 
-    if (!toSymbolResp) {
-      return utils.send(400, {
-        message: `user doesn't exists or  doesn't have ${toSymbol} toSymbol`,
-      });
-    }
+    // if (!toSymbolResp) {
+    //   return utils.send(400, {
+    //     message: `user doesn't exists or  doesn't have ${toSymbol} toSymbol`,
+    //   });
+    // }
 
-    const updated_balance_of_to_symbol =
-      parseFloat(toSymbolResp?.balance) + amountToBeAddedInToSymbol;
-    console.log({ updated_balance_of_to_symbol });
+    // const updated_balance_of_to_symbol =
+    //   parseFloat(toSymbolResp?.balance) + amountToBeAddedInToSymbol;
+    // console.log({ updated_balance_of_to_symbol });
 
-    // update balance for sender and receiver
-    await utils.updateBalance(fromSymbolResp.assetId, updated_balance_of_from_symbol);
-    await utils.updateBalance(
-        toSymbolResp.assetId,
-      updated_balance_of_to_symbol
-    );
+    // // update balance for sender and receiver
+    // await utils.updateBalance(fromSymbolResp.assetId, updated_balance_of_from_symbol);
+    // await utils.updateBalance(
+    //     toSymbolResp.assetId,
+    //   updated_balance_of_to_symbol
+    // );
 
     const symObject = {
       from : fromSymbol,
-      to : toSymbol
+      to : toSymbol,
+      tokenAmount: tokenAmount,
+      txnId: txnId
     }
     // create transactions
-    await utils.createTransaction(userId, userId, amount, symObject, "swap");
+    await utils.createTransaction(userId, userId, amount, symObject, "swap", status);
 
     return utils.send(200, {
       message: "funds SWAP successfuly",

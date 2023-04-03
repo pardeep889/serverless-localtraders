@@ -3,16 +3,6 @@ const { verifyUser } = require("./token");
 
 module.exports.handler = async (request) => {
   try {
-    const isVerified = await verifyUser(request);
-    if (isVerified.statusCode === 401) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({
-          isVerified: false,
-          error: "Access Forbidden",
-        }),
-      };
-    }
 
     if (!request.body) {
       return utils.send(400, {
@@ -29,45 +19,50 @@ module.exports.handler = async (request) => {
       });
     }
 
-    if (!body.symbol || !body.timePeroidInMonths || !body.stakeAmount || !body.userId) {
+    if (!body.stakeAmount || !body.userId || !body.unlockedDate || !body.txnId || !body.tokenAmount) {
       return utils.send(400, {
-        message: "missing symbol, userId,timePeroidInMonths or stakeAmount the body",
+        message: "missing stakeAmount, userId, unlockedDate ,  tokenAmountor txnId the body",
       });
     }
 
-    let { timePeroidInMonths, stakeAmount, symbol, userId } = body;
+    let { unlockedDate, stakeAmount, userId ,tokenAmount , txnId} = body;
 
-    const assetResponse = await utils.retrieveAssetBalance(
-      userId,
-      symbol
-    );
-    console.log("assetResponse rr##### ", { assetResponse });
-
-    if (!assetResponse) {
-      return utils.send(400, {
-        message: ` user doesn't exists or  doesn't have ${symbol} symbol`,
-      });
+    const symObject = {
+      tokenAmount: tokenAmount,
+      txnId: txnId,
+      unlockedDate: unlockedDate
     }
+    // const assetResponse = await utils.retrieveAssetBalance(
+    //   userId,
+    //   symbol
+    // );
+    // console.log("assetResponse rr##### ", { assetResponse });
 
-    if (parseFloat(assetResponse?.balance) < +stakeAmount) {
-      return utils.send(400, {
-        message: "user with this asset doesn't have sufficient balance to add in stake",
-      });
-    }
+    // if (!assetResponse) {
+    //   return utils.send(400, {
+    //     message: ` user doesn't exists or  doesn't have ${symbol} symbol`,
+    //   });
+    // }
 
-    // create stack
-    await utils.createStack(userId,symbol,stakeAmount,parseFloat(timePeroidInMonths))
+    // if (parseFloat(assetResponse?.balance) < +stakeAmount) {
+    //   return utils.send(400, {
+    //     message: "user with this asset doesn't have sufficient balance to add in stake",
+    //   });
+    // }
 
-    const updated_balance_of_asset =
-      parseFloat(assetResponse?.balance) - (+stakeAmount);
-    console.log({ updated_balance_of_asset });
+    // // create stack
+    // await utils.createStack(userId,symbol,stakeAmount,parseFloat(timePeroidInMonths))
 
-    // update balance of asset 
+    // const updated_balance_of_asset =
+    //   parseFloat(assetResponse?.balance) - (+stakeAmount);
+    // console.log({ updated_balance_of_asset });
 
-    await utils.updateBalance(assetResponse.assetId, updated_balance_of_asset);
+    // // update balance of asset 
+
+    // await utils.updateBalance(assetResponse.assetId, updated_balance_of_asset);
 
     // create transactions
-    await utils.createTransaction(userId, userId, stakeAmount, symbol, "stake");
+    await utils.createTransaction(userId, userId, stakeAmount, symObject, "stake");
 
     return utils.send(200, {
       message: "balance added in stack successfuly",
