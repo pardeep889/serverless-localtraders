@@ -8,30 +8,19 @@ module.exports.handler = async (request) => {
   try {
 
     const { id } = request.pathParameters;
+    const userId = id;
 
-    if (!id) {
+    if (!userId) {
       return utils.send(400, {
         message: "Missing id path param",
       });
     }
 
-    const isVerified = await verifyUser(request);
-    if (isVerified.statusCode === 401) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({
-          isVerified: false,
-          error: "Access Forbidden",
-        }),
-      };
-    }
-
-
     const params = {
         TableName: "WithDrawal",
-        FilterExpression: "id = :id",
+        FilterExpression: "userId = :userId",
         ExpressionAttributeValues: {
-          ":id": id,
+          ":userId": userId,
         },
       };
   

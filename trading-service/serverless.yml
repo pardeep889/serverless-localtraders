@@ -97,6 +97,14 @@ functions:
         - httpApi:
             path: /market-cap/lct
             method: get
+  marketplace-filter:
+      handler: marketplace_filter.handler
+      memorySize: 840
+      timeout: 15
+      events:
+        - httpApi:
+            path: /marketplace_filter/{name}
+            method: get
 resources:
   Resources:
     TradingTable:

@@ -16,8 +16,10 @@ const assets = [
 
 const send = (statusCode, data) => {
   const responseHeaders = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
+    'Content-Type': 'application/json',
+    // Required for CORS support to work
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Credentials': true,
     'Access-Control-Allow-Methods': '*'
   };
 
@@ -157,7 +159,7 @@ async function updateBalance(assetId, updatedBalance) {
     throw new Error(error);
   }
 }
-async function createTransaction(from, to, amount, symbol, type) {
+async function createTransaction(from, to, amount, symbol, type, txnId = "-", status="pending") {
   try {
     const trxn_id =
       "txn-" + Date.now() + Math.random().toString(36).substring(2, 15);
@@ -171,6 +173,8 @@ async function createTransaction(from, to, amount, symbol, type) {
       amount,
       symbol,
       timestamp,
+      txnId,
+      status
     };
 
     const params = {

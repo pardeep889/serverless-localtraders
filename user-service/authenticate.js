@@ -30,6 +30,7 @@ module.exports.handler = async (request) => {
 
 
   let { email, password } = body;
+  email = email.toLowerCase();
   try {
     const params = {
       TableName: "User",

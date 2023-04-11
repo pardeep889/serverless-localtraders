@@ -3,8 +3,11 @@ const AWS = require("aws-sdk");
 const { default: axios } = require("axios");
 
 module.exports.handler = async (request) => {
+
+  const { name } = request.pathParameters;
+
   try {
-    const lctData = await (await axios.get("https://www.coingecko.com/price_charts/27936/usd/90_days.json")).data;
+    const lctData = await (await axios.get(`https://www.coingecko.com/price_charts/27936/usd/${name}`)).data;
 
     return utils.send(200, {
       message: "currencies retrieved successfully",

@@ -46,62 +46,45 @@ module.exports.handler = async (request) => {
         message: "request body is not a valid JSON",
       });
     }
-  
-    try {
-      const requiredFields = ["userId","amount","symbolType"]
-      await utils.validateRequestBody(requiredFields, body);
-    } catch (error) {
-      return utils.send(400, {
-        message: error.toString().slice(6).trim(),
-      });
-    }
+
 
     try {
-      const isVerified = await verifyUser(request);
-      if (isVerified.statusCode === 401) {
-        return {
-          statusCode: 401,
-          body: JSON.stringify({
-            isVerified: false,
-            error: "Access Forbidden",
-          }),
-        };
-      }
-      
-      let {userId,amount,symbolType } = body;
+      let {userId,amount,symbolType, txnId, status } = body;
       const symbol_lowerCase = symbolType?.toLowerCase()
 
-      // first check if userId exist with respective to symbolType 
+    //   // first check if userId exist with respective to symbolType 
       
-    const assetResp = await utils.retrieveAssetBalance(userId, symbol_lowerCase);
-    console.log("sender rr##### ", { assetResp });
+    // const assetResp = await utils.retrieveAssetBalance(userId, symbol_lowerCase);
+    // console.log("sender rr##### ", { assetResp });
 
-    if (!assetResp) {
-      return utils.send(404, {
-        message: `user not found with respective ${symbol_lowerCase} symbol`,
-      });
-    }
+    // if (!assetResp) {
+    //   return utils.send(404, {
+    //     message: `user not found with respective ${symbol_lowerCase} symbol`,
+    //   });
+    // }
 
-    if (parseFloat(assetResp?.balance) < amount) {
-      return utils.send(400, {
-        message: "user doesn't have sufficient balance to withdrawal",
-      });
-    }
+    // if (parseFloat(assetResp?.balance) < amount) {
+    //   return utils.send(400, {
+    //     message: "user doesn't have sufficient balance to withdrawal",
+    //   });
+    // }
 
-    const updated_balance = parseFloat(assetResp?.balance) - amount;
-    // update balance for asset
-    await utils.updateBalance(assetResp.assetId, updated_balance);
+    // const updated_balance = parseFloat(assetResp?.balance) - amount;
+    // // update balance for asset
+    // await utils.updateBalance(assetResp.assetId, updated_balance);
     
       // add entry to kyc table
     const withDrawalData = {
       userId,
       amount,
-      symbol :symbol_lowerCase
+      symbol :symbol_lowerCase,
+      txnId,
+      status
     };
 
    const resp =  await Withdrawal(withDrawalData)
    // create transaction 
-   await utils.createTransaction(userId, userId, amount, symbol_lowerCase, "withdrawal");
+   await utils.createTransaction(userId, userId, amount, symbol_lowerCase, "withdrawal", txnId, status);
 
     return utils.send(200, {
       message: "withdrawal successfully.",

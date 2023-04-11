@@ -1,7 +1,7 @@
 const utils = require("./utils");
 const AWS = require("aws-sdk");
 const { default: axios } = require("axios");
-const dataCOIN  = require("./templatedata");
+const dataCOIN = require("./templatedata");
 
 module.exports.handler = async (request) => {
   try {
@@ -21,41 +21,90 @@ module.exports.handler = async (request) => {
     //   return filtered;
     // }, []);
 
-    const LCDTURL = "https://widget.nomics.com/api/assets/LCT3/BUSD/";
-    const lcdResponse = await axios.post(LCDTURL);
-    const newResp = lcdResponse?.data;
+    let lctObject = {};
 
-    const restructureResp = {
-      id: newResp?.meta?.id,
-      symbol: newResp?.meta?.symbol,
-      name: newResp?.meta?.name,
-      image: newResp?.meta?.logo_url,
-      current_price: +newResp?.meta?.price,
-      market_cap: +newResp?.meta?.market_cap_dominance,
-      market_cap_rank: +newResp?.meta?.rank,
-      high_24h: +newResp?.meta?.high,
-      price_change_24h: +newResp?.day?.price_change,
-      price_change_percentage_24h: +newResp?.day?.price_change_pct,
-      market_cap_change_24h: +newResp?.day?.volume_change,
-      market_cap_change_percentage_24h: +newResp?.day?.volume_change_pct,
-      ath_date: newResp?.meta?.price_timestamp,
-      last_updated: newResp?.meta?.price_timestamp,
-      price_change_percentage_7d_in_currency: +newResp?.week?.price_change,
-      fully_diluted_valuation: 41577212120,
-      total_volume: 3585289420,
-      low_24h: 0.995022,
-      circulating_supply: 41573818587.8173,
-      total_supply: 41573063493.2984,
-      max_supply: null,
-      ath: 1.17,
-      ath_change_percentage: -14.73218,
-      atl: 0.891848,
-      atl_change_percentage: 12.12011,
-      roi: null,
-      sparkline_in_7d: {
-        price: newResp?.history,
-      },
-    };
+    try {
+      const LCDTURL = "https://api.coingecko.com/api/v3/coins/collectcoin-2";
+      const lcdResponse = await axios.get(LCDTURL);
+      const newResp = lcdResponse?.data;
+
+      const restructureResp = {
+        id: newResp?.meta?.id,
+        symbol: "LCT",
+        name: "Localtraders",
+        image:
+          "https://s3.us-east-2.amazonaws.com/nomics-api/static/images/currencies/LCT3.png",
+        current_price: newResp?.market_data?.current_price?.usd,
+        market_cap: newResp?.market_data?.market_cap?.usd,
+        market_cap_rank: newResp?.market_cap_rank,
+        high_24h: newResp?.market_data?.high_24h?.usd,
+        price_change_24h: newResp?.market_data?.price_change_24h,
+        price_change_percentage_24h:
+          newResp?.market_data?.price_change_percentage_24h,
+        market_cap_change_24h: newResp?.market_data?.market_cap_change_24h,
+        market_cap_change_percentage_24h:
+          newResp?.market_data?.market_cap_change_percentage_24h,
+        price_change_percentage_7d_in_currency:
+          newResp?.market_data?.price_change_percentage_24h_in_currency?.usd,
+        total_volume: newResp?.market_data?.total_volume?.usd,
+        low_24h: newResp?.market_data?.low_24h?.usd,
+        circulating_supply: newResp?.market_data?.circulating_supply,
+        total_supply: newResp?.market_data?.total_supply,
+        max_supply: newResp?.market_data?.max_supply,
+        sparkline_in_7d: {
+          price: [ null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null],
+        },
+        full_data: newResp,
+      };
+      lctObject = restructureResp;
+    } catch (error) {
+      lctObject = {
+        symbol: "LCT",
+        name: "Localtraders",
+        image:
+          "https://s3.us-east-2.amazonaws.com/nomics-api/static/images/currencies/LCT3.png",
+        current_price: 0.01477266,
+        market_cap: 0,
+        market_cap_rank: null,
+        high_24h: 0.01568689,
+        price_change_24h: -0.000549959216251,
+        price_change_percentage_24h: -3.5892,
+        market_cap_change_24h: 0,
+        market_cap_change_percentage_24h: 0,
+        price_change_percentage_7d_in_currency: -3.5892,
+        total_volume: 10323.84,
+        low_24h: 0.01477022,
+        circulating_supply: 0,
+        total_supply: 100000000,
+        max_supply: 100000000,
+        sparkline_in_7d: {},
+        full_data: null
+      };
+    }
+
     const result = dataCOIN.reduce((filtered, filterValue) => {
       const { symbol } = filterValue;
       if (targetSymbols.has(symbol.toLowerCase())) {
@@ -66,7 +115,7 @@ module.exports.handler = async (request) => {
 
     return utils.send(200, {
       message: "currencies retrieved successfully",
-      data: [...result, restructureResp]
+      data: [...result, lctObject],
     });
   } catch (error) {
     console.log("pardeep", error);
