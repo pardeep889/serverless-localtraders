@@ -9,7 +9,7 @@ module.exports.handler = async (request) => {
     //   "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=true&price_change_percentage=7d";
     // const currencies = await axios.get(URL);
     const targetSymbols = new Set(
-      ["bnb", "btc", "eth", "usdt", "usdc", "busd"].map((val) =>
+      ["bnb", "btc", "eth", "usdt", "usdc", "busd", "matic"].map((val) =>
         val.toLowerCase()
       )
     );
@@ -24,7 +24,8 @@ module.exports.handler = async (request) => {
     let lctObject = {};
 
     try {
-      const LCDTURL = "https://api.coingecko.com/api/v3/coins/collectcoin-2";
+      const LCDTURL = "https://api.coingecko.com/api/v3/coins/local-traders";
+      const lctdata = await axios.get("https://api.coingecko.com/api/v3/coins/local-traders/market_chart?vs_currency=usd&days=7");
       const lcdResponse = await axios.get(LCDTURL);
       const newResp = lcdResponse?.data;
 
@@ -35,7 +36,7 @@ module.exports.handler = async (request) => {
         image:
           "https://s3.us-east-2.amazonaws.com/nomics-api/static/images/currencies/LCT3.png",
         current_price: newResp?.market_data?.current_price?.usd,
-        market_cap: newResp?.market_data?.market_cap?.usd,
+        market_cap: newResp?.market_data?.fully_diluted_valuation?.usd,
         market_cap_rank: newResp?.market_cap_rank,
         high_24h: newResp?.market_data?.high_24h?.usd,
         price_change_24h: newResp?.market_data?.price_change_24h,
@@ -52,32 +53,8 @@ module.exports.handler = async (request) => {
         total_supply: newResp?.market_data?.total_supply,
         max_supply: newResp?.market_data?.max_supply,
         sparkline_in_7d: {
-          price: [ null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null],
-        },
-        full_data: newResp,
+          price: lctdata.data.prices.map(el => el[1].toFixed(6))
+        }
       };
       lctObject = restructureResp;
     } catch (error) {
