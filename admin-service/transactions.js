@@ -7,7 +7,7 @@ const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 module.exports.handler = async (event) => {
   try {
 
-    const isVerified = await verifyUser(request);
+    const isVerified = await verifyUser(event);
     if (isVerified.statusCode === 401) {
       return {
         statusCode: 401,
