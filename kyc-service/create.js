@@ -71,7 +71,7 @@ module.exports.handler = async (request) => {
         };
       }
       
-      let {userId,firstName,lastName,email,dob,address,pincode,city,state,country,phoneNumber,document_name,document_id } = body;
+      let {userId,firstName,lastName } = body;
   
       // first check if userId already exits
       const paramsScan = {
@@ -88,23 +88,16 @@ module.exports.handler = async (request) => {
           message: "already request for kyc verification",
         });
       }
-  
+    let response = await onfido.applicant.create(body);
+
     
       // add entry to kyc table
     const KycDetails = {
       userId,
       firstName,
-      lastName,
-      email,
-      dob,
-      address,
-      pincode,
-      city,
-      state,
-      country,
-      document_id,
-      document_name,
-      phoneNumber,
+      lastName, 
+      onfido: response,
+      app_id: response.id
     };
 
    const resp =  await createKyc(KycDetails)

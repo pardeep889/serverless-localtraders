@@ -39,6 +39,12 @@ functions:
       - httpApi:
           path: /kyc/{userId}
           method: get
+  create-applicant:
+    handler: create-applicant.handler
+    events:
+      - httpApi:
+          path: /kyc/add-applicant
+          method: post
 
 resources:
   Resources:

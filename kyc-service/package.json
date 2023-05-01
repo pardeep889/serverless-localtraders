@@ -12,6 +12,7 @@
     "serverless-offline": "^8.8.1"
   },
   "dependencies": {
+    "@onfido/api": "^2.7.0",
     "axios": "^1.3.2",
     "jsonwebtoken": "^9.0.0",
     "serverless": "^3.27.0"
