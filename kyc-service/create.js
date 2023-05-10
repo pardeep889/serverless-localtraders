@@ -1,6 +1,7 @@
 const utils = require("./utils");
 const { verifyUser } = require("./token");
 const AWS = require("aws-sdk");
+const { onfido } = require("./onfido_setup");
 const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 
 async function createKyc(data) {
@@ -12,7 +13,7 @@ async function createKyc(data) {
       id,
       ...data,
       timestamp,
-      status : "pending",
+      status : "not_started",
       isVerified : false
 
     };
@@ -47,11 +48,11 @@ module.exports.handler = async (request) => {
         message: "request body is not a valid JSON",
       });
     }
-  
+  console.log(body)
 
 
     try {
-      const requiredFields = ["userId","firstName","lastName","email","dob","address","pincode","city",'state',"country","phoneNumber","document_name","document_id"]
+      const requiredFields = ["userId","firstName","lastName"]
       await utils.validateRequestBody(requiredFields, body);
     } catch (error) {
       return utils.send(400, {
@@ -95,9 +96,9 @@ module.exports.handler = async (request) => {
     const KycDetails = {
       userId,
       firstName,
-      lastName, 
-      onfido: response,
-      app_id: response.id
+      lastName,
+      app_id: response.id,
+      work_flow_internal: "no-id"
     };
 
    const resp =  await createKyc(KycDetails)

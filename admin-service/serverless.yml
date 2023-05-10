@@ -173,6 +173,20 @@ functions:
       - httpApi:
           path: /admin/kpi
           method: get 
+
+  change-password:
+    handler: change-password.handler
+    events:
+      - httpApi:
+          path: /admin/change-password
+          method: post 
+
+  price-set:
+    handler: price_set/priceset.handler
+    events:
+      - httpApi:
+          path: /admin/set-price
+          method: get
 resources:
   Resources:
     AdminTable:

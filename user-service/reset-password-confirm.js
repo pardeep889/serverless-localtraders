@@ -7,7 +7,25 @@ const CryptoJS = require("crypto-js");
 module.exports.handler = async (request) => {
   try {
     const { token } = request.pathParameters;
-    console.log("### reaueset ###",request)
+    console.log("### reaueset ###",request);
+
+    let body;
+    try {
+      body = JSON.parse(request.body);
+    } catch (err) {
+      return utils.send(400, {
+        message: "request body is not a valid JSON",
+      });
+    }
+
+    try {
+      const requiredFields = ["newPassword"]
+      await utils.validateRequestBody(requiredFields, body);
+    } catch (error) {
+      return utils.send(400, {
+        message: error.toString().slice(6).trim(),
+      });
+    }
     const { newPassword } = JSON.parse(request.body);
 
 
@@ -29,6 +47,12 @@ module.exports.handler = async (request) => {
     // decode token
    const tokenResponse = await decodeToken(token)
    console.log("##### token REsponse ####",tokenResponse)
+   if(!tokenResponse.isVerified){
+    return utils.send(400, {
+      message: "Invalid token provided",
+      error,
+    });
+   }
 
     // check if user exist in our db
     const paramsScan = {

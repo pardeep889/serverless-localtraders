@@ -39,11 +39,25 @@ functions:
       - httpApi:
           path: /kyc/{userId}
           method: get
-  create-applicant:
-    handler: create-applicant.handler
+
+  fetch-sdk-token:
+    handler: fetch-sdk-token.handler
     events:
       - httpApi:
-          path: /kyc/add-applicant
+          path: /kyc/sdk-token/{userId}
+          method: get
+  run-workflow:
+    handler: runWorkflow.handler
+    events:
+      - httpApi:
+          path: /kyc/run-workflow/
+          method: post
+
+  check-kyc:
+    handler: kyc_check.handler
+    events:
+      - httpApi:
+          path: /kyc/check/
           method: post
 
 resources:
