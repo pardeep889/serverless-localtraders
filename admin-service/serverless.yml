@@ -23,13 +23,13 @@ provider:
             - Fn::GetAtt: [PaymentCategory, Arn]
             - Fn::GetAtt: [ServiceProviderTable, Arn]
 
-            - arn:aws:dynamodb:us-east-1:945677977841:table/User
-            - arn:aws:dynamodb:us-east-1:945677977841:table/trading-offer
-            - arn:aws:dynamodb:us-east-1:945677977841:table/Stakes
-            - arn:aws:dynamodb:us-east-1:945677977841:table/ContactUs
-            - arn:aws:dynamodb:us-east-1:945677977841:table/kyc
-            - arn:aws:dynamodb:us-east-1:945677977841:table/Transaction
-            - arn:aws:dynamodb:us-east-1:945677977841:table/Vendor
+            - arn:aws:dynamodb:us-east-2:945677977841:table/User
+            - arn:aws:dynamodb:us-east-2:945677977841:table/trading-offer
+            - arn:aws:dynamodb:us-east-2:945677977841:table/Stakes
+            - arn:aws:dynamodb:us-east-2:945677977841:table/ContactUs
+            - arn:aws:dynamodb:us-east-2:945677977841:table/kyc
+            - arn:aws:dynamodb:us-east-2:945677977841:table/Transaction
+            - arn:aws:dynamodb:us-east-2:945677977841:table/Vendor
 
 
             

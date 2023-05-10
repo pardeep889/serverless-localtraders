@@ -18,10 +18,10 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - Fn::GetAtt: [FundsTable, Arn]
-            - arn:aws:dynamodb:us-east-1:945677977841:table/Wallet
-            - arn:aws:dynamodb:us-east-1:945677977841:table/Asset
-            - arn:aws:dynamodb:us-east-1:945677977841:table/User
-            - arn:aws:dynamodb:us-east-1:945677977841:table/Transaction
+            - arn:aws:dynamodb:us-east-2:945677977841:table/Wallet
+            - arn:aws:dynamodb:us-east-2:945677977841:table/Asset
+            - arn:aws:dynamodb:us-east-2:945677977841:table/User
+            - arn:aws:dynamodb:us-east-2:945677977841:table/Transaction
 
 
   httpApi:

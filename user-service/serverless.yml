@@ -25,10 +25,10 @@ provider:
           Resource:
             - Fn::GetAtt: [UsersTable, Arn]
             - Fn::GetAtt: [ContactUsTable, Arn]
-            - arn:aws:dynamodb:us-east-1:945677977841:table/Wallet
-            - arn:aws:dynamodb:us-east-1:945677977841:table/Asset
+            - arn:aws:dynamodb:us-east-2:945677977841:table/Wallet
+            - arn:aws:dynamodb:us-east-2:945677977841:table/Asset
             - arn:aws:iam::945677977841:user/ses-smtp-user.20230207-161506 
-            - arn:aws:dynamodb:us-east-1:945677977841:table/User 
+            - arn:aws:dynamodb:us-east-2:945677977841:table/User 
 
 
   environment:

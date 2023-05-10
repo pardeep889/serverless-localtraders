@@ -18,8 +18,8 @@ provider:
             - s3:PutObject # added S3 permissions
           Resource:
             - Fn::GetAtt: [KycResource, Arn]
-            - arn:aws:dynamodb:us-east-1:945677977841:table/Asset
-            - arn:aws:dynamodb:us-east-1:945677977841:table/Transaction
+            - arn:aws:dynamodb:us-east-2:945677977841:table/Asset
+            - arn:aws:dynamodb:us-east-2:945677977841:table/Transaction
             - arn:aws:s3:::kyc-bucket/* # added S3 resource
 
   httpApi:

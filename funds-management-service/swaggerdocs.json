@@ -5,48 +5,48 @@
     },
     "servers": [
         {
-            "url":"https://a6a3jqs6pi.execute-api.us-east-1.amazonaws.com",
+            "url":"https://a6a3jqs6pi.execute-api.us-east-2.amazonaws.com",
             "description":"withdrawal"
         },
         {
-            "url":"https://6o1mxixjta.execute-api.us-east-1.amazonaws.com",
+            "url":"https://6o1mxixjta.execute-api.us-east-2.amazonaws.com",
             "description":"kyc"
         },
         {
-            "url":"https://45ay8f3brj.execute-api.us-east-1.amazonaws.com",
+            "url":"https://45ay8f3brj.execute-api.us-east-2.amazonaws.com",
             "description":"stake"
         },
         {
-            "url":"https://8vhkfqahgf.execute-api.us-east-1.amazonaws.com",
+            "url":"https://8vhkfqahgf.execute-api.us-east-2.amazonaws.com",
             "description":"asset"
         },
         {
-            "url" :" https://y13ltsm0w7.execute-api.us-east-1.amazonaws.com",
+            "url" :" https://y13ltsm0w7.execute-api.us-east-2.amazonaws.com",
             "description":"wallet"
         },
         {
-            "url":"https://q3j8v1plql.execute-api.us-east-1.amazonaws.com",
+            "url":"https://q3j8v1plql.execute-api.us-east-2.amazonaws.com",
             "description" :"vendor"
         },
         {
-            "url":"https://yjfcum4617.execute-api.us-east-1.amazonaws.com/dev",
+            "url":"https://yjfcum4617.execute-api.us-east-2.amazonaws.com/dev",
             "description":"notification "
         },
         {
-            "url":"https://0mtdc4kfg5.execute-api.us-east-1.amazonaws.com",
+            "url":"https://0mtdc4kfg5.execute-api.us-east-2.amazonaws.com",
             "description":"trade "
         },
         {
-            "url": "https://3p4sfu8qxh.execute-api.us-east-1.amazonaws.com",
+            "url": "https://3p4sfu8qxh.execute-api.us-east-2.amazonaws.com",
             "description": "admin "
 
         },
         {
-            "url": "https://8gtef0v2qd.execute-api.us-east-1.amazonaws.com",
+            "url": "https://8gtef0v2qd.execute-api.us-east-2.amazonaws.com",
             "description": "user "
         },
         {
-            "url": " https://53nsznx3bl.execute-api.us-east-1.amazonaws.com",
+            "url": " https://53nsznx3bl.execute-api.us-east-2.amazonaws.com",
             "description": "funds "
         }
     

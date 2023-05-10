@@ -17,7 +17,7 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - Fn::GetAtt: [AssetTable, Arn]
-            - arn:aws:dynamodb:us-east-1:945677977841:table/Wallet
+            - arn:aws:dynamodb:us-east-2:945677977841:table/Wallet
   httpApi:
     cors: true
 
