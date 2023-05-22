@@ -37,7 +37,7 @@ const sendEmail = async(to,subject,content) =>{
     AWS.config.update({
       accessKeyId: "AKIA5YLWMZDY2UPJ4J7U",
       secretAccessKey: "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",
-      region: "us-east-2",
+      region: process.env.REGION
     });
     // create Nodemailer SES transporter
     let transporter = nodemailer.createTransport({

@@ -4,6 +4,8 @@ frameworkVersion: "3"
 provider:
   name: aws
   runtime: nodejs14.x
+  stage: ${file(../serverless-config.json):stage}
+  region: ${file(../serverless-config.json):region}
   iam:
     role:
       statements:
@@ -17,8 +19,8 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - Fn::GetAtt: [WithDrawalResource, Arn]
-            - arn:aws:dynamodb:us-east-2:945677977841:table/Asset
-            - arn:aws:dynamodb:us-east-2:945677977841:table/Transaction
+            - arn:aws:dynamodb:${file(../serverless-config.json):region}:945677977841:table/Asset
+            - arn:aws:dynamodb:${file(../serverless-config.json):region}:945677977841:table/Transaction
 
   httpApi:
     cors: true

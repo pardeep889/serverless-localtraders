@@ -108,6 +108,7 @@ module.exports.handler = async (request) => {
       data: resp
     });
   } catch (error) {
+    console.log(error)
     return utils.send(400, {
       message: "Unable to submit kyc request. something went wrong",
       error: error + "",

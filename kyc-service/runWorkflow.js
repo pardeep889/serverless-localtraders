@@ -26,9 +26,6 @@ module.exports.handler = async (request) => {
         });
       }
   
-
-
-
     const isVerified = await verifyUser(request);
     if (isVerified.statusCode === 401) {
       return {

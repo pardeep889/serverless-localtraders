@@ -4,6 +4,8 @@ frameworkVersion: "3"
 provider:
   name: aws
   runtime: nodejs14.x
+  stage: ${file(../serverless-config.json):stage}
+  region: ${file(../serverless-config.json):region}
   iam:
     role:
       statements:
@@ -18,8 +20,8 @@ provider:
             - s3:PutObject # added S3 permissions
           Resource:
             - Fn::GetAtt: [KycResource, Arn]
-            - arn:aws:dynamodb:us-east-2:945677977841:table/Asset
-            - arn:aws:dynamodb:us-east-2:945677977841:table/Transaction
+            - arn:aws:dynamodb:${file(../serverless-config.json):region}:945677977841:table/Asset
+            - arn:aws:dynamodb:${file(../serverless-config.json):region}:945677977841:table/Transaction
             - arn:aws:s3:::kyc-bucket/* # added S3 resource
 
   httpApi:
@@ -46,18 +48,19 @@ functions:
       - httpApi:
           path: /kyc/sdk-token/{userId}
           method: get
-  run-workflow:
+
+  run-workflow-onfido:
     handler: runWorkflow.handler
     events:
       - httpApi:
-          path: /kyc/run-workflow/
+          path: /kyc/run-onfido-workflow
           method: post
 
-  check-kyc:
-    handler: kyc_check.handler
+  kyc-check-onfido:
+    handler: kycCheck.handler
     events:
       - httpApi:
-          path: /kyc/check/
+          path: /kyc/check
           method: post
 
 resources:

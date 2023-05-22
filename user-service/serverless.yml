@@ -9,6 +9,8 @@ custom:
 provider:
   name: aws
   runtime: nodejs14.x
+  stage: ${file(../serverless-config.json):stage}
+  region: ${file(../serverless-config.json):region}
   iam:
     role:
       statements:
@@ -25,14 +27,15 @@ provider:
           Resource:
             - Fn::GetAtt: [UsersTable, Arn]
             - Fn::GetAtt: [ContactUsTable, Arn]
-            - arn:aws:dynamodb:us-east-2:945677977841:table/Wallet
-            - arn:aws:dynamodb:us-east-2:945677977841:table/Asset
+            - arn:aws:dynamodb:${file(../serverless-config.json):region}:945677977841:table/Wallet
+            - arn:aws:dynamodb:${file(../serverless-config.json):region}:945677977841:table/Asset
             - arn:aws:iam::945677977841:user/ses-smtp-user.20230207-161506 
-            - arn:aws:dynamodb:us-east-2:945677977841:table/User 
+            - arn:aws:dynamodb:${file(../serverless-config.json):region}:945677977841:table/User 
 
 
   environment:
     USERS_TABLE: User
+    REGION: ${file(../serverless-config.json):region}
 
   httpApi:
     cors: true

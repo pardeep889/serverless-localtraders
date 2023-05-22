@@ -3,6 +3,8 @@ service: notification-service
 provider:
     name: aws
     runtime: nodejs14.x
+    stage: ${file(../serverless-config.json):stage}
+    region: ${file(../serverless-config.json):region}
     iamRoleStatements:
         - Effect: Allow
           Action:

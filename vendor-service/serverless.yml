@@ -8,6 +8,8 @@ custom:
 provider:
   name: aws
   runtime: nodejs14.x
+  stage: ${file(../serverless-config.json):stage}
+  region: ${file(../serverless-config.json):region}
   iam:
     role:
       statements:
@@ -23,6 +25,8 @@ provider:
             - Fn::GetAtt: [VendorsTable, Arn]
   environment:
     USERS_TABLE: Vendor
+    REGION: ${file(../serverless-config.json):region}
+
     
   httpApi:
     cors: true
