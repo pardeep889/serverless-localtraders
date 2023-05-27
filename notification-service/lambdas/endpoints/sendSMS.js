@@ -9,7 +9,6 @@ function generateCode() {
   }
 
 exports.handler = async (event) => {
-  console.log("event", event);
 
   const body = JSON.parse(event.body);
 
@@ -29,7 +28,7 @@ exports.handler = async (event) => {
   };
 
   const messageParams = {
-    Message: ""+code,
+    Message: "Hello from Local Traders your verification code is: "+code,
     PhoneNumber: body.phoneNumber,
   };
 
@@ -48,6 +47,7 @@ exports.handler = async (event) => {
     console.log(code)
 
     const data = await dynamoDb.scan(paramsScan).promise();
+    // console.log(data)
     if (data.Items.length > 0) {
       const { id, email } = data.Items[0];
 
@@ -70,7 +70,11 @@ exports.handler = async (event) => {
         message: "text has been sent",
         otp: code,
       });
-    }
+    }else{
+      
+      return Responses._200({
+        message: "User not Found"
+      })}
   } catch (error) {
     console.log("error", error);
     return Responses._400({ message: "text failed to send" });

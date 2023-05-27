@@ -6,19 +6,20 @@ const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = async (event) => {
   try {
-    const offerdata = JSON.parse(event.body);
-    let {username,paymentMethodCategory,paymentMethod,avgTime,price,currency,type,location } = offerdata;
+    const body = JSON.parse(event.body);
+    let {username,paymentMethodCategory,paymentMethod,avgTime,price,currency,type,location } = body;
+
+    try {
+      const requiredFields = ["userId","paymentMethodCategory","paymentMethod","avgTime","price","currency","type","location"]
+      await utils.validateRequestBody(requiredFields, body);
+    } catch (error) {
+      return utils.send(400, {
+        message: error.toString().slice(6).trim(),
+      });
+    }
 
     const id = Date.now() + Math.random().toString(36).substring(2, 15);
     const createdAt = Date.now()
-
-
-    if (!offerdata) {
-      return utils.send(400, {
-        message: event.body,
-        data: {},
-      });
-    }
 
     // add user to db
     const params = {
@@ -45,7 +46,7 @@ module.exports.handler = async (event) => {
       },
     });
   } catch (error) {
- 
+    console.log(error)
     return utils.send(400, {
       message: "something went wrong",
       data: {},

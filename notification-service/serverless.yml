@@ -34,3 +34,30 @@ functions:
                   path: verify-sms
                   method: POST
                   cors: true
+    store-ip-address: 
+        handler: lambdas/IP/handle.storeIPAddress
+        events:
+            - http:
+                path: ip-info
+                method: POST
+                cors: true
+
+resources:
+  Resources:
+    IPAddressTableStore:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: IPAddressTableStore
+        AttributeDefinitions:
+          - AttributeName: ipAddress
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ipAddress
+            KeyType: HASH
+
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
+
+plugins:
+  - serverless-offline
